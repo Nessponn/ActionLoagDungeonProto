@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705cb2efb3cba5a4c8d4055a12dc4074, type: 3}
+  m_Name: S_NormalDashAttack
+  m_EditorClassIdentifier: 
+  Normal_Name: 
+  Commentary: 
+  Skill_UsingTarget: 
+  skilltype: 0
+  skillattribute: 0
+  Power: 0
+  HitStun_Time: 0
+  NockBack_Power: 0
+  NockBack_Angle: 0
+  Skill_LifeTime: 0
+  _FrontGap: 0
+  _Afterglow: 0
+  Final_Afterglow: 0
+  Max_Combo: 0
+  Require_CoolTime: 0
+  ShootDistance: 0
+  Advance_Name: 
+  Commentary_A: 
+  Advance_PowerMagnitude: 1
+  Advance_Require_StartSpan_DecreaseTime: 0
+  Advance_CoolTime_DecreaseTime: 0
+  Revolusion_Name: 
+  Commentary_R: 
+  Revolusion_PowerMagnitude: 1
+  Revolusion_Require_StartSpan_DecreaseTime: 0
+  Revolusion_CoolTime_DecreaseTime: 0
+  Technical_Name: 
+  Commentary_T: 
+  Technical_PowerMagnitude: 1
+  Technical_Require_StartSpan_DecreaseTime: 0
+  Technical_CoolTime_DecreaseTime: 0
+  Special_Name: 
+  Commentary_S: 
+  Special_PowerMagnitude: 1
+  Special_Require_StartSpan_DecreaseTime: 0
+  Special_CoolTime_DecreaseTime: 0

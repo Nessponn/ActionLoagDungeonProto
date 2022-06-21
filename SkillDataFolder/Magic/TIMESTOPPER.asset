@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705cb2efb3cba5a4c8d4055a12dc4074, type: 3}
+  m_Name: TIMESTOPPER
+  m_EditorClassIdentifier: 
+  Normal_Name: "\u30BF\u30A4\u30E0\u30B9\u30C8\u30C3\u30D1\u30FC"
+  Commentary: "\uFF13\u79D2\u9593\u3001\u6642\u3092\u6B62\u3081\u308B\uFF01\n\u767A\u52D5\u306B\u5C11\u3057\u6642\u9593\u304C\u304B\u304B\u308B\u3002"
+  skilltype: 3
+  skillattribute: 6
+  Power: 3
+  Skill_Time: 3
+  Require_StartSpan: 3
+  Require_EndSpan: 0
+  Next_EnableSkillTime: 15
+  ShootDistance: 0
+  Advance_Name: 
+  Commentary_A: "3\u79D2\u9593\u3001\u6642\u3092\u6B62\u3081\u308B\uFF01\n\u5373\u5EA7\u306B\u767A\u52D5\u53EF\u80FD\uFF01"
+  Advance_PowerMagnitude: 1
+  Advance_Require_StartSpan_DecreaseTime: 3
+  Advance_CoolTime_DecreaseTime: 0
+  Revolusion_Name: 
+  Commentary_R: "\uFF15\u79D2\u9593\u3001\u6642\u3092\u6B62\u3081\u308B\uFF01\n\u767A\u52D5\u306B\u5C11\u3057\u6642\u9593\u304C\u304B\u304B\u308B\u3002"
+  Revolusion_PowerMagnitude: 1
+  Revolusion_Require_StartSpan_DecreaseTime: 0
+  Revolusion_CoolTime_DecreaseTime: 0
+  Technical_Name: 
+  Commentary_T: "\uFF11.5\u79D2\u9593\u3001\u6642\u3092\u6B62\u3081\u308B\uFF01\n\u5373\u5EA7\u306B\u767A\u52D5\u53EF\u80FD\uFF01\n\u30AF\u30FC\u30EB\u30BF\u30A4\u30E0\u304C\u5927\u5E45\u306B\u77ED\u7E2E\uFF01"
+  Technical_PowerMagnitude: 1
+  Technical_Require_StartSpan_DecreaseTime: 3
+  Technical_CoolTime_DecreaseTime: 10
+  Special_Name: 
+  Commentary_S: "10\u79D2\u9593\u3001\u6642\u3092\u6B62\u3081\u308B\uFF01\n\u767A\u52D5\u306B\u5C11\u3057\u6642\u9593\u304C\u304B\u304B\u308B\u3002\n\u767A\u52D5\u5F8C\u306E\u30AF\u30FC\u30EB\u30BF\u30A4\u30E0\u304C\u5927\u5E45\u306B\u5897\u52A0\u3002"
+  Special_PowerMagnitude: 1
+  Special_Require_StartSpan_DecreaseTime: 0
+  Special_CoolTime_DecreaseTime: -15

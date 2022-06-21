@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705cb2efb3cba5a4c8d4055a12dc4074, type: 3}
+  m_Name: R_NormalDashAttack
+  m_EditorClassIdentifier: 
+  Normal_Name: 
+  Commentary: "\u901A\u5E38\u3088\u308A\u3082\u653B\u6483\u529B\u304C\u4E0A\u304C\u308A\n\u30B3\u30F3\u30DC\u306E\u7DE0\u3081\u306B\u6575\u3092\u5927\u304D\u304F\u5439\u3063\u98DB\u3070\u3059\uFF01"
+  Skill_UsingTarget: 
+  skilltype: 0
+  skillattribute: 0
+  Power: 7
+  HitStun_Time: 1
+  NockBack_Power: 0.5
+  Final_NockBack_Power: 5
+  NockBack_Angle: -45
+  Normal_Frontglow: 0
+  Normal_Collider_LifeTime: 0.1
+  Normal_Afterglow: 0.15
+  Combo_ContinueTime: 0.3
+  Final_Frontglow: 0
+  Final_Collider_LifeTime: 0.1
+  Final_Afterglow: 0.2
+  Max_Combo: 6
+  Require_CoolTime: 0
+  Deceleration_rate: 0.9
+  Final_Deceleration_rate: 0.9
+  ShootDistance: 0
+  Advance_Name: 
+  Commentary_A: 
+  Advance_PowerMagnitude: 1
+  Advance_Require_StartSpan_DecreaseTime: 0
+  Advance_CoolTime_DecreaseTime: 0
+  Revolusion_Name: 
+  Commentary_R: 
+  Revolusion_PowerMagnitude: 1
+  Revolusion_Require_StartSpan_DecreaseTime: 0
+  Revolusion_CoolTime_DecreaseTime: 0
+  Technical_Name: 
+  Commentary_T: 
+  Technical_PowerMagnitude: 1
+  Technical_Require_StartSpan_DecreaseTime: 0
+  Technical_CoolTime_DecreaseTime: 0
+  Special_Name: 
+  Commentary_S: 
+  Special_PowerMagnitude: 1
+  Special_Require_StartSpan_DecreaseTime: 0
+  Special_CoolTime_DecreaseTime: 0

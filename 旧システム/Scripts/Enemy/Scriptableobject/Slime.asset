@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3a2fe0cf9179a64f8b163e841153875, type: 3}
+  m_Name: Slime
+  m_EditorClassIdentifier: 
+  HP: 1
+  Respawn: 1
+  Animpatch: {fileID: 0}
+  Image: {fileID: 21300000, guid: 3ecd363bd18b6b14a8a5ae53aa96b47b, type: 3}
+  Scale: 1.5
+  move: 1
+  Speed: 10
+  Speed_InAir: 0
+  Speed_OnIce: 0
+  MaxSpeed: 0.3
+  Jump: 1
+  JumpPower: 1
+  Animation: 1
+  _move: {fileID: 7400000, guid: 100c2a63524af2a46abbab48726f4d07, type: 2}
+  _jump: {fileID: 0}
+  Circleoffset_y: 0
+  radius: 0
+  BoxCol: 1
+  Boxsize: {x: 0.672111, y: 0.8122914}
+  Boxoffset: {x: -0.06233209, y: -0.09007761}
+  Mass: 1
+  Gravity: 1
+  constant_x: 0
+  constant_y: 0
+  constant_z: 1
+  PlayerRangeWithconstant_x: 0
+  PlayerRangeWithconstant_y: 0
+  PlayerRangeWithconstant_z: 0
+  PlayerDamage: 1
+  PlayerSearchRange: 13
+  PlayerSpinPenetration: 0
+  PlayerCameraOut_thisObjectDelete: 0

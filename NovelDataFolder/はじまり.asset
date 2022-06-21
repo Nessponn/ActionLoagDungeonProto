@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: defd4f39c30974344b6ae079654c632b, type: 3}
+  m_Name: "\u306F\u3058\u307E\u308A"
+  m_EditorClassIdentifier: 
+  discussion_kind: 0
+  Data:
+  - person: 0
+    Text: "\u3042\u3042\u3042\u3042\u3042\u3042\u3042\u3042"
+    Passeage_RequireSendTime: 0
+    character_voice: {fileID: 0}
+  - person: 2
+    Text: "\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\n\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\u3044\n"
+    Passeage_RequireSendTime: 0.05
+    character_voice: {fileID: 0}
+  - person: 1
+    Text: "\u3046\u306F\u306F\u306F\u306F\u306F\u306F\u306F\u306F\uFF01\uFF01\uFF01\uFF01\uFF01\uFF01\uFF01\n\u3042\u3072\u3083\u3072\u3083\u3072\u3083\u3072\u3083\u3072\u3083\u3072\u3083\u3072\u3083\u3072\u3083"
+    Passeage_RequireSendTime: 0
+    character_voice: {fileID: 0}
+  Prev: {fileID: 0}
+  Next: {fileID: 0}
