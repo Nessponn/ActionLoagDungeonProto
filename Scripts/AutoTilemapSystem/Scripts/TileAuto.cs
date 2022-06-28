@@ -38,7 +38,8 @@ public class TileAuto : MonoBehaviour
         tilemap = StageGrid.GetComponent<Tilemap>();
 
         //単純に拡大すると右上にずれていくので、ここで拡大した分だけずらす
-        //StageGrid.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
+        StageGrid.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
+        //gameObject.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
 
         tilemap.size = new Vector3Int(x_GridRange,y_GridRange, tilemap.size.z);
         //tilemap.CompressBounds();
@@ -61,29 +62,32 @@ public class TileAuto : MonoBehaviour
 
         //int gridnum = bound.max.x;
 
-        //左上からタイルを代入するにかけ、始点からの　offset　と　枠の大きさ　と　枠を作る際の右からの変数　を決める(最初はクラスとか作んないでおく)
+        //左上からタイルを代入するにかけ、始点からの　'offset'　と　枠の大きさ'　と　'枠を作る際の右からの変数'　を決める(最初はクラスとか作んないでおく)
 
-        int offset = Random.Range(0, x_GridRange);//枠の位置をずらす値
+        int offsetX,offsetY;//枠の位置をずらす値
         int boxsize = mapbox_scale_x >= x_GridRange ? x_GridRange : mapbox_scale_x;//枠の大きさ
         int OutlineX = bound.max.x;//使わんかも
         int OutlineY = bound.min.y;//使わんかも
 
+        
         for (int i = 0; i < BuildCount; i++)
         {
-            for(int y = bound.max.y - 1; y >= bound.min.y; --y){//左上から右下にかけてタイルを代入していく
+            //生成する枠のoffsetをビルド回数ごとに決定する
+            offsetX = Random.Range(0, x_GridRange - mapbox_scale_x);
+            offsetY = Random.Range(0, y_GridRange - mapbox_scale_y);
 
-                for (int x = bound.min.x; x < bound.max.x; ++x)
+            for (int y = mapbox_scale_y - 1; y >= bound.min.y; --y){//左下から右上にかけてタイルを代入していく
+
+                for (int x = bound.min.x; x < mapbox_scale_x; ++x)
                 {
-                    var tile = tilemap.GetTile<Tile>(new Vector3Int(x, y, 0));
-
-                    var position = new Vector3Int(x, y, 0);
+                    var position = new Vector3Int(x + offsetX, y + offsetY, 0);//ブロックを配置する位置の決定
                     //Vector3 rotation = tilemap.GetTransformMatrix(position).rotation.eulerAngles;//回転を取る
 
                     //タイル情報の保存
                     //var info = new TileInfo(position, 0, rotation, tile, MAP_SPEED);
                     //ist.Add(info);
 
-                    if(x < bound.min.x + Outline_scale_x || x > bound.max.x - 1 - Outline_scale_x)
+                    if((x < bound.min.x + Outline_scale_x || x > mapbox_scale_x - 1 - Outline_scale_x) || (y >= mapbox_scale_y - Outline_scale_y) || y <= bound.min.y + Outline_scale_y - 1)
                     {
                         tilemap.SetTile(position, Basetile);
                     }

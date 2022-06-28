@@ -155,11 +155,11 @@ MonoBehaviour:
   StageGrid: {fileID: 1960328615}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
   BuildCount: 1
-  x_GridRange: 14
-  y_GridRange: 14
-  Outline_scale_x: 3
-  Outline_scale_y: 3
-  mapbox_scale_x: 8
+  x_GridRange: 64
+  y_GridRange: 64
+  Outline_scale_x: 1
+  Outline_scale_y: 1
+  mapbox_scale_x: 10
   mapbox_scale_y: 8
 --- !u!4 &1031095402
 Transform:
