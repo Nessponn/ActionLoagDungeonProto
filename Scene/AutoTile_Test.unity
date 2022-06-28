@@ -155,12 +155,12 @@ MonoBehaviour:
   StageGrid: {fileID: 1960328615}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
   BuildCount: 1
-  x_GridRange: 10
-  y_GridRange: 10
-  Outline_scale_x: 1
-  Outline_scale_y: 1
-  mapbox_scale_x: 10
-  mapbox_scale_y: 20
+  x_GridRange: 14
+  y_GridRange: 14
+  Outline_scale_x: 3
+  Outline_scale_y: 3
+  mapbox_scale_x: 8
+  mapbox_scale_y: 8
 --- !u!4 &1031095402
 Transform:
   m_ObjectHideFlags: 0
@@ -171,6 +171,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -254,6 +255,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -297,6 +299,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1960328616}
   m_Father: {fileID: 0}
@@ -330,6 +333,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1628137720}
   m_RootOrder: 0
@@ -345,6 +349,7 @@ TilemapRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0

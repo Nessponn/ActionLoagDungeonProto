@@ -55,23 +55,57 @@ public class TileAuto : MonoBehaviour
     void TileCellar()
     {
         //与えられたマップに重みを付ける
+        int num = 0;
+        var tilemap = StageGrid.GetComponent<Tilemap>();
+        var bound = StageGrid.GetComponent<Tilemap>().cellBounds;
 
-        //for()
+        //int gridnum = bound.max.x;
 
+        //左上からタイルを代入するにかけ、始点からの　offset　と　枠の大きさ　と　枠を作る際の右からの変数　を決める(最初はクラスとか作んないでおく)
 
+        int offset = Random.Range(0, x_GridRange);//枠の位置をずらす値
+        int boxsize = mapbox_scale_x >= x_GridRange ? x_GridRange : mapbox_scale_x;//枠の大きさ
+        int OutlineX = bound.max.x;//使わんかも
+        int OutlineY = bound.min.y;//使わんかも
 
         for (int i = 0; i < BuildCount; i++)
         {
+            for(int y = bound.max.y - 1; y >= bound.min.y; --y){//左上から右下にかけてタイルを代入していく
+
+                for (int x = bound.min.x; x < bound.max.x; ++x)
+                {
+                    var tile = tilemap.GetTile<Tile>(new Vector3Int(x, y, 0));
+
+                    var position = new Vector3Int(x, y, 0);
+                    //Vector3 rotation = tilemap.GetTransformMatrix(position).rotation.eulerAngles;//回転を取る
+
+                    //タイル情報の保存
+                    //var info = new TileInfo(position, 0, rotation, tile, MAP_SPEED);
+                    //ist.Add(info);
+
+                    if(x < bound.min.x + Outline_scale_x || x > bound.max.x - 1 - Outline_scale_x)
+                    {
+                        tilemap.SetTile(position, Basetile);
+                    }
+
+                    num++;
+                }
+            }
+        }
+
+
+        /*for (int i = 0; i < BuildCount; i++)
+        {
             //生成位置のスタート地点をオフセットで決める
-            Zurashi_x = Random.Range(-x_GridRange / 2, x_GridRange / 2);
-            Zurashi_y = Random.Range(-y_GridRange / 2, y_GridRange / 2);
+            //Zurashi_x = Random.Range(-x_GridRange / 2, x_GridRange / 2);
+            //Zurashi_y = Random.Range(-y_GridRange / 2, y_GridRange / 2);
 
             //まず、マップ + 空洞　の四角い枠を生成する（開発段階での工程。きちんと□が生成される段階になったら、重みをつける処理に変更する）
             for (int y = -Outline_scale_y - mapbox_scale_y + tilemap.size.y / 2 + Zurashi_y; y <= Outline_scale_y + mapbox_scale_y - 1 + tilemap.size.y / 2 + Zurashi_y; ++y)
             {
                 for (int x = -Outline_scale_x - mapbox_scale_x + tilemap.size.x / 2 + Zurashi_x; x < Outline_scale_x + mapbox_scale_x + tilemap.size.x / 2 + Zurashi_x; ++x)
                 {
-                    /*
+                    *//*
                     if((x <= x + mapbox_scale_x && x > x - mapbox_scale_x))
                     {
                         tilemap.SetTile(new Vector3Int(x, y, tilemap.size.z), Basetile);
@@ -80,7 +114,7 @@ public class TileAuto : MonoBehaviour
                     {
                         tilemap.SetTile(new Vector3Int(x, y, tilemap.size.z), null);
                     }
-                    */
+                    *//*
 
                     Vector3Int grid = tilemap.WorldToCell(new Vector3Int(x- tilemap.size.x / 2, y - tilemap.size.y / 2, tilemap.size.z));
 
@@ -104,7 +138,7 @@ public class TileAuto : MonoBehaviour
 
                 }
             }
-        }
+        }*/
     }
 
     /*
