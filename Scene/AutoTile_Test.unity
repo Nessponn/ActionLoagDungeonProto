@@ -152,15 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd299395cd3b45f408f76d8e281411b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StageData: {fileID: 11400000, guid: ef8d278d59ac2944e850fb97e9b1e136, type: 2}
   StageGrid: {fileID: 1960328615}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
-  BuildCount: 1
-  x_GridRange: 64
-  y_GridRange: 64
-  Outline_scale_x: 1
-  Outline_scale_y: 1
-  mapbox_scale_x: 10
-  mapbox_scale_y: 8
 --- !u!4 &1031095402
 Transform:
   m_ObjectHideFlags: 0

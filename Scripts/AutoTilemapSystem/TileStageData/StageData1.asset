@@ -12,3 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7826a56892cab4192350972eca2963, type: 3}
   m_Name: StageData1
   m_EditorClassIdentifier: 
+  x_GridRange: 64
+  y_GridRange: 64
+  Stage:
+  - StageSize: {x: 8, y: 8}
+    OutlineNum: 1
+  - StageSize: {x: 9, y: 9}
+    OutlineNum: 1
+  - StageSize: {x: 12, y: 12}
+    OutlineNum: 1
+  - StageSize: {x: 18, y: 18}
+    OutlineNum: 1
+  - StageSize: {x: 12, y: 12}
+    OutlineNum: 1
+  - StageSize: {x: 12, y: 12}
+    OutlineNum: 1
+  - StageSize: {x: 12, y: 12}
+    OutlineNum: 1

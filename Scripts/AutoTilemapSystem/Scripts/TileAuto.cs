@@ -6,36 +6,35 @@ using UnityEngine.Tilemaps;
 
 public class TileAuto : MonoBehaviour
 {
+    public TileStageData StageData;
     public GameObject StageGrid;
     private Tilemap tilemap;
 
     public TileBase Basetile;
 
     //ビルド回数(発生させる箱の数)
-    public int BuildCount;
+    private int BuildCount;
 
     //タイルマップの全体サイズ
-    public int x_GridRange;
-    public int y_GridRange;
+    private int x_GridRange;
+    private int y_GridRange;
 
-
-    //軸からいくらずらすか
-    private int Zurashi_x;
-    private int Zurashi_y;
-
-
-    //最大の枠からいくら縮小させるか
     //どのくらいのサイズの枠を作るか
-    public int Outline_scale_x;
-    public int Outline_scale_y;
+    private int Outline_scale_x;
+    private int Outline_scale_y;
 
     //製作するマップの空洞のサイズ
-    public int mapbox_scale_x;
-    public int mapbox_scale_y;
+    private int mapbox_scale_x;
+    private int mapbox_scale_y;
 
     private void Start()
     {
         tilemap = StageGrid.GetComponent<Tilemap>();
+
+
+        //タイルマップの全体サイズ
+        x_GridRange = StageData.x_GridRange;
+        y_GridRange = StageData.y_GridRange;
 
         //単純に拡大すると右上にずれていくので、ここで拡大した分だけずらす
         StageGrid.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
@@ -65,13 +64,22 @@ public class TileAuto : MonoBehaviour
         //左上からタイルを代入するにかけ、始点からの　'offset'　と　枠の大きさ'　と　'枠を作る際の右からの変数'　を決める(最初はクラスとか作んないでおく)
 
         int offsetX,offsetY;//枠の位置をずらす値
-        int boxsize = mapbox_scale_x >= x_GridRange ? x_GridRange : mapbox_scale_x;//枠の大きさ
-        int OutlineX = bound.max.x;//使わんかも
-        int OutlineY = bound.min.y;//使わんかも
 
-        
-        for (int i = 0; i < BuildCount; i++)
+
+
+        for (int i = 0; i < StageData.Stage.Count; i++)
         {
+            //ビルド回数(発生させる箱の数)
+            BuildCount = StageData.Stage.Count;
+
+            //どのくらいのサイズの枠を作るか
+            Outline_scale_x = StageData.Stage[i].OutlineNum;
+            Outline_scale_y = StageData.Stage[i].OutlineNum;
+
+            //製作するマップの空洞のサイズ
+            mapbox_scale_x = (int)StageData.Stage[i].StageSize.x;
+            mapbox_scale_y = (int)StageData.Stage[i].StageSize.y;
+
             //生成する枠のoffsetをビルド回数ごとに決定する
             offsetX = Random.Range(0, x_GridRange - mapbox_scale_x);
             offsetY = Random.Range(0, y_GridRange - mapbox_scale_y);
