@@ -7,7 +7,10 @@ using UnityEngine.Tilemaps;
 public class TileAuto : MonoBehaviour
 {
     public TileStageData StageData;
-    public GameObject StageGrid;
+    public GameObject StageGrid;//レンダリング基盤となるタイルフィールド
+
+    public GameObject PreStages;//マップ生成の基盤となるもの
+
     private Tilemap tilemap;
 
     public TileBase Basetile;
@@ -29,8 +32,29 @@ public class TileAuto : MonoBehaviour
 
     private void Start()
     {
-        tilemap = StageGrid.GetComponent<Tilemap>();
+        TileSetup();    //マップの設定のセットアップ
 
+        //Debug.Log(tilemap.size);
+
+        //Premap_Init();   //プリセットのマスを生成する
+
+
+        //PrePoints_Detection();  //プリセットのマスから中継地点を定義する
+
+
+        //(中継地点を経由しながら)タイルを埋める
+        //TileCellar();
+
+        //タイルの状態を確認
+        CheckTileCell();
+    }
+
+    //プリセットのタイルを認識し、部屋を追加する中継位置を定義する
+
+    void TileSetup()
+    {
+        //タイルマップのコンポーネント取得
+        tilemap = StageGrid.GetComponent<Tilemap>();
 
         //タイルマップの全体サイズ
         x_GridRange = StageData.x_GridRange;
@@ -40,15 +64,100 @@ public class TileAuto : MonoBehaviour
         StageGrid.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
         //gameObject.transform.position = new Vector3(-x_GridRange / 2, -y_GridRange / 2, 0);
 
-        tilemap.size = new Vector3Int(x_GridRange,y_GridRange, tilemap.size.z);
+        tilemap.size = new Vector3Int(x_GridRange, y_GridRange, tilemap.size.z);
         //tilemap.CompressBounds();
+    }
+
+    //セットされたプリセットステージをセットする
+    void Premap_Init()
+    {
+        if (!PreStages) return;
+        
+        var Pretilemap = PreStages.GetComponent<Tilemap>();
+        var Prebound = PreStages.GetComponent<Tilemap>().cellBounds;
+
+        Pretilemap.CompressBounds();//リサイズ
 
 
-        //タイルを埋める
-        TileCellar();
+        //セットされたプリステージがタイルマップの全体サイズより大きい場合、大きさを上書きする
+        if (Pretilemap.size.x > x_GridRange) x_GridRange = Pretilemap.size.x;
+        if (Pretilemap.size.y > y_GridRange) y_GridRange = Pretilemap.size.y;
 
-        //タイルの状態を確認
-        CheckTileCell();
+        //サイズの更新
+        tilemap.size = new Vector3Int(x_GridRange, y_GridRange, tilemap.size.z);
+
+
+        for (int y = Prebound.max.y - 1; y >= Prebound.min.y; --y)
+        {//左上から右下にかけてタイルを監査する
+
+            for (int x = Prebound.min.x; x < Prebound.max.x; ++x)
+            {
+                var position = new Vector3Int(x, y, 0);//参照するブロック
+
+                //タイルの取得
+                TileBase tile = Pretilemap.GetTile(position);
+
+                //基盤のタイルマップにプリセット地形を転写
+                tilemap.SetTile(position, tile);
+                
+            }
+        }
+
+    }
+
+    //プリセットのタイルマップから中継地点を捜索する
+    void PrePoints_Detection()
+    {
+        var tilemap = StageGrid.GetComponent<Tilemap>();
+        var bound = StageGrid.GetComponent<Tilemap>().cellBounds;
+
+        //与えられたマップに重みを付ける
+        int num = 0;
+        Vector3Int StartPos = new Vector3Int();
+        Vector3Int EndPos = new Vector3Int(); ;
+
+        for (int y = bound.max.y - 1; y >= bound.min.y; --y)
+        {//左上から右下にかけてタイルを監査する
+
+            //工程が変わるごとにnumの値をリセット
+            num = 0;
+            for (int x = bound.min.x; x < bound.max.x; ++x)
+            {
+                var position = new Vector3Int(x, y, 0);//参照するブロック
+
+                //タイルの取得
+                TileBase tile = tilemap.GetTile(position);
+
+                if(tile != null)
+                {
+                    //numが0の時、現在の参照位置を始点を設定
+                    if(num == 0)StartPos = position;
+
+                    //タイルのカウント
+                    num++;
+                }
+                else
+                {
+                    //現在の参照位置を終点を設定
+                    EndPos = position;
+
+                    //切れた時点で、中継地点として使用するかどうかの決定判断を処理する
+                    PrePoints_Init(num,StartPos,EndPos);
+
+                    //numの値をリセット
+                    num = 0;
+                }
+            }
+        }
+    }
+
+    //中継地点の生成
+    void PrePoints_Init(int num, Vector3Int StartPos, Vector3Int EndPos)
+    {
+        //一区画の長さが　一定数以下　であれば、それを部屋として見なさない
+        if (num <= 8) return;
+
+
     }
 
     //タイルを埋めるためのメソッド。アルゴリズムに必要な部屋の作成
@@ -59,13 +168,9 @@ public class TileAuto : MonoBehaviour
         var tilemap = StageGrid.GetComponent<Tilemap>();
         var bound = StageGrid.GetComponent<Tilemap>().cellBounds;
 
-        //int gridnum = bound.max.x;
-
         //左上からタイルを代入するにかけ、始点からの　'offset'　と　枠の大きさ'　と　'枠を作る際の右からの変数'　を決める(最初はクラスとか作んないでおく)
 
         int offsetX,offsetY;//枠の位置をずらす値
-
-
 
         for (int i = 0; i < StageData.Stage.Count; i++)
         {
@@ -104,53 +209,6 @@ public class TileAuto : MonoBehaviour
                 }
             }
         }
-
-
-        /*for (int i = 0; i < BuildCount; i++)
-        {
-            //生成位置のスタート地点をオフセットで決める
-            //Zurashi_x = Random.Range(-x_GridRange / 2, x_GridRange / 2);
-            //Zurashi_y = Random.Range(-y_GridRange / 2, y_GridRange / 2);
-
-            //まず、マップ + 空洞　の四角い枠を生成する（開発段階での工程。きちんと□が生成される段階になったら、重みをつける処理に変更する）
-            for (int y = -Outline_scale_y - mapbox_scale_y + tilemap.size.y / 2 + Zurashi_y; y <= Outline_scale_y + mapbox_scale_y - 1 + tilemap.size.y / 2 + Zurashi_y; ++y)
-            {
-                for (int x = -Outline_scale_x - mapbox_scale_x + tilemap.size.x / 2 + Zurashi_x; x < Outline_scale_x + mapbox_scale_x + tilemap.size.x / 2 + Zurashi_x; ++x)
-                {
-                    *//*
-                    if((x <= x + mapbox_scale_x && x > x - mapbox_scale_x))
-                    {
-                        tilemap.SetTile(new Vector3Int(x, y, tilemap.size.z), Basetile);
-                    }
-                    else
-                    {
-                        tilemap.SetTile(new Vector3Int(x, y, tilemap.size.z), null);
-                    }
-                    *//*
-
-                    Vector3Int grid = tilemap.WorldToCell(new Vector3Int(x- tilemap.size.x / 2, y - tilemap.size.y / 2, tilemap.size.z));
-
-                    if (tilemap.HasTile(grid))
-                    {
-                        Debug.Log("通った");
-                        break;
-                    }
-
-                    if (x < tilemap.size.x / 2 + Zurashi_x + mapbox_scale_x && x >= tilemap.size.x / 2 + Zurashi_x - mapbox_scale_x && y < tilemap.size.y / 2 + Zurashi_y + mapbox_scale_y && y >= tilemap.size.y / 2 + Zurashi_y - mapbox_scale_y)
-                    {
-                        tilemap.SetTile(grid, null);
-                    }
-                    else
-                    {
-                        
-                        tilemap.SetTile(grid, Basetile);
-                    }
-
-                    //
-
-                }
-            }
-        }*/
     }
 
     /*

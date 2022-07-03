@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StageData: {fileID: 11400000, guid: ef8d278d59ac2944e850fb97e9b1e136, type: 2}
   StageGrid: {fileID: 1960328615}
+  PreStages: {fileID: 3822397672574743636, guid: 6628f8f20aa0aaa4aafdb0dc4146ee4f, type: 3}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
 --- !u!4 &1031095402
 Transform:
@@ -391,15 +392,39 @@ Tilemap:
   m_Enabled: 1
   m_Tiles: {}
   m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: 19038.002
+      e01: 0
+      e02: 19037.5
+      e03: 19037.5
+      e10: 6.4e-44
+      e11: 0
+      e12: 6.4e-44
+      e13: 6.4e-44
+      e20: 2.0089952e-10
+      e21: 1.83671e-40
+      e22: -2.4094138e-19
+      e23: 3.810714e+19
+      e30: 4.5905e-41
+      e31: 0
+      e32: 6.5e-43
+      e33: 6.54e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: 3.4046e-41, g: 3.4046e-41, b: 3.4046e-41, a: 3.4046e-41}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
+  m_Origin: {x: -36, y: -6, z: 0}
+  m_Size: {x: 76, y: 25, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
