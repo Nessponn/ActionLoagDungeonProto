@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class TileAuto : MonoBehaviour
 {
+    #region//変数一覧
+
     public TileStageData StageData;
     public GameObject StageGrid;//レンダリング基盤となるタイルフィールド
 
@@ -13,7 +15,8 @@ public class TileAuto : MonoBehaviour
 
     private Tilemap tilemap;
 
-    public TileBase Basetile;
+    public TileBase Basetile;//壁や床の元となるタイル
+    public TileBase Chaintile;//連結部の生成位置（デバッグ用）
 
     //ビルド回数(発生させる箱の数)
     private int BuildCount;
@@ -30,16 +33,22 @@ public class TileAuto : MonoBehaviour
     private int mapbox_scale_x;
     private int mapbox_scale_y;
 
+
+    //連結情報保存用クラス変数
+    private List<PrePoints_Info> Preinfo = new List<PrePoints_Info>();
+
+    #endregion
+
     private void Start()
     {
         TileSetup();    //マップの設定のセットアップ
 
         //Debug.Log(tilemap.size);
 
-        //Premap_Init();   //プリセットのマスを生成する
+        Premap_Init();   //プリセットのマスを生成する
 
 
-        //PrePoints_Detection();  //プリセットのマスから中継地点を定義する
+        PrePoints_Detection();  //プリセットのマスから中継地点を定義する
 
 
         //(中継地点を経由しながら)タイルを埋める
@@ -92,10 +101,11 @@ public class TileAuto : MonoBehaviour
 
             for (int x = Prebound.min.x; x < Prebound.max.x; ++x)
             {
-                var position = new Vector3Int(x, y, 0);//参照するブロック
+                //参照するブロック
+                var position = new Vector3Int(x + (x_GridRange - Pretilemap.size.x) / 2, y + (y_GridRange - Pretilemap.size.y) / 2, 0);
 
                 //タイルの取得
-                TileBase tile = Pretilemap.GetTile(position);
+                TileBase tile = Pretilemap.GetTile(new Vector3Int(x, y, 0));
 
                 //基盤のタイルマップにプリセット地形を転写
                 tilemap.SetTile(position, tile);
@@ -116,6 +126,7 @@ public class TileAuto : MonoBehaviour
         Vector3Int StartPos = new Vector3Int();
         Vector3Int EndPos = new Vector3Int(); ;
 
+        //X軸の検査
         for (int y = bound.max.y - 1; y >= bound.min.y; --y)
         {//左上から右下にかけてタイルを監査する
 
@@ -140,9 +151,46 @@ public class TileAuto : MonoBehaviour
                 {
                     //現在の参照位置を終点を設定
                     EndPos = position;
+                    EndPos.x = EndPos.x - 1;//一個前の位置を設定
 
                     //切れた時点で、中継地点として使用するかどうかの決定判断を処理する
-                    PrePoints_Init(num,StartPos,EndPos);
+                    PrePoints_Init(num,StartPos,EndPos,true);
+
+                    //numの値をリセット
+                    num = 0;
+                }
+            }
+        }
+
+        //y軸の検査
+        for (int x = bound.min.x; x < bound.max.x; ++x)
+        {//左上から右下にかけてタイルを監査する
+
+            //工程が変わるごとにnumの値をリセット
+            num = 0;
+            for (int y = bound.max.y - 1; y >= bound.min.y; --y)
+            {
+                var position = new Vector3Int(x, y, 0);//参照するブロック
+
+                //タイルの取得
+                TileBase tile = tilemap.GetTile(position);
+
+                if (tile != null)
+                {
+                    //numが0の時、現在の参照位置を始点を設定
+                    if (num == 0) StartPos = position;
+
+                    //タイルのカウント
+                    num++;
+                }
+                else
+                {
+                    //現在の参照位置を終点を設定
+                    EndPos = position;
+                    EndPos.y = EndPos.y + 1;//一個前の位置を設定
+
+                    //切れた時点で、中継地点として使用するかどうかの決定判断を処理する
+                    PrePoints_Init(num, StartPos, EndPos, false);
 
                     //numの値をリセット
                     num = 0;
@@ -152,13 +200,42 @@ public class TileAuto : MonoBehaviour
     }
 
     //中継地点の生成
-    void PrePoints_Init(int num, Vector3Int StartPos, Vector3Int EndPos)
+    void PrePoints_Init(int num, Vector3Int StartPos, Vector3Int EndPos ,bool Xmark)
     {
         //一区画の長さが　一定数以下　であれば、それを部屋として見なさない
         if (num <= 8) return;
 
+        var position = new Vector3Int();
+
+        //検査対象をx軸かy軸かで区別
+        if(Xmark) position = new Vector3Int(EndPos.x - ((EndPos.x - StartPos.x) / 2), StartPos.y, StartPos.z);
+        else position = new Vector3Int(StartPos.x, EndPos.y - ((EndPos.y - StartPos.y) / 2), StartPos.z);
+
+        //デバッグ用の連結位置保存
+        tilemap.SetTile(position, Chaintile);
+
+        //連結部情報の保存
+        var info = new PrePoints_Info(position, true);
+        Preinfo.Add(info);
 
     }
+
+    class PrePoints_Info
+    {
+        Vector3Int position;//位置
+        bool Xmark;//X軸の連結部か
+
+        public PrePoints_Info(Vector3Int position,bool Xmark)
+        {
+            this.position = position;
+            this.Xmark = Xmark;
+        }
+    }
+
+
+
+
+
 
     //タイルを埋めるためのメソッド。アルゴリズムに必要な部屋の作成
     void TileCellar()
