@@ -52,7 +52,7 @@ public class TileAuto : MonoBehaviour
 
 
         //(中継地点を経由しながら)タイルを埋める
-        //TileCellar();
+        TileCellar();
 
         //タイルの状態を確認
         CheckTileCell();
@@ -215,15 +215,16 @@ public class TileAuto : MonoBehaviour
         tilemap.SetTile(position, Chaintile);
 
         //連結部情報の保存
-        var info = new PrePoints_Info(position, true);
+        var info = new PrePoints_Info(position, Xmark);
         Preinfo.Add(info);
 
     }
 
     class PrePoints_Info
     {
-        Vector3Int position;//位置
-        bool Xmark;//X軸の連結部か
+        public readonly Vector3Int position;//位置
+        public readonly bool Xmark;//X軸の連結部か
+        public bool Selected;//既に連結箇所として選出されたか
 
         public PrePoints_Info(Vector3Int position,bool Xmark)
         {
@@ -235,7 +236,7 @@ public class TileAuto : MonoBehaviour
 
 
 
-
+    int DeadRock_Number;//デッドロックを回避するためのもの
 
     //タイルを埋めるためのメソッド。アルゴリズムに必要な部屋の作成
     void TileCellar()
@@ -251,10 +252,20 @@ public class TileAuto : MonoBehaviour
 
         for (int i = 0; i < StageData.Stage.Count; i++)
         {
+            if (Preinfo.Count <= 0 || DeadRock_Number >= 10) return;
+            //枠を生成する位置の連結部分を選出する
+            int listnum = Random.Range(0, Preinfo.Count);
+            var Preposition = Preinfo[listnum].position;
+
+            //生成する枠のoffsetをビルド回数ごとに決定する
+            offsetX = Preposition.x;
+            offsetY = Preposition.y;
+
+
             //ビルド回数(発生させる箱の数)
             BuildCount = StageData.Stage.Count;
 
-            //どのくらいのサイズの枠を作るか
+            //枠の太さ
             Outline_scale_x = StageData.Stage[i].OutlineNum;
             Outline_scale_y = StageData.Stage[i].OutlineNum;
 
@@ -262,22 +273,28 @@ public class TileAuto : MonoBehaviour
             mapbox_scale_x = (int)StageData.Stage[i].StageSize.x;
             mapbox_scale_y = (int)StageData.Stage[i].StageSize.y;
 
-            //生成する枠のoffsetをビルド回数ごとに決定する
-            offsetX = Random.Range(0, x_GridRange - mapbox_scale_x);
-            offsetY = Random.Range(0, y_GridRange - mapbox_scale_y);
+
+            /*//設定しているマップの大きさを超過してないか確認
+            if(offsetX + mapbox_scale_x - bound.min.x >= bound.max.x || offsetY + mapbox_scale_y - bound.min.y >= bound.max.y)
+            {
+                TileCellar();
+
+                DeadRock_Number++;
+                return;
+            }*/
+
+            //確認できたなら　選出した連結位置を消去
+            Preinfo.RemoveAt(listnum);
+
 
             for (int y = mapbox_scale_y - 1; y >= bound.min.y; --y){//左下から右上にかけてタイルを代入していく
 
                 for (int x = bound.min.x; x < mapbox_scale_x; ++x)
                 {
                     var position = new Vector3Int(x + offsetX, y + offsetY, 0);//ブロックを配置する位置の決定
-                    //Vector3 rotation = tilemap.GetTransformMatrix(position).rotation.eulerAngles;//回転を取る
 
-                    //タイル情報の保存
-                    //var info = new TileInfo(position, 0, rotation, tile, MAP_SPEED);
-                    //ist.Add(info);
-
-                    if((x < bound.min.x + Outline_scale_x || x > mapbox_scale_x - 1 - Outline_scale_x) || (y >= mapbox_scale_y - Outline_scale_y) || y <= bound.min.y + Outline_scale_y - 1)
+                    //条件に合えばブロック配置
+                    if ((x < bound.min.x + Outline_scale_x || x > mapbox_scale_x - 1 - Outline_scale_x) || (y >= mapbox_scale_y - Outline_scale_y) || y <= bound.min.y + Outline_scale_y - 1)
                     {
                         tilemap.SetTile(position, Basetile);
                     }

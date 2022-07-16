@@ -123,6 +123,68 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &865093118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 865093120}
+  - component: {fileID: 865093119}
+  - component: {fileID: 865093121}
+  m_Layer: 0
+  m_Name: "\u7A74\u6398\u308A\u6CD5"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &865093119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865093118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 432577450eeb29b44a8dc066228356e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &865093120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865093118}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &865093121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865093118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa70c433f53944469f81149723fd088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Width: 44
+  Height: 54
+  StageGrid: {fileID: 1960328615}
+  Basetile: {fileID: 11400000, guid: 4727914d1868e25408cab1592cc287f4, type: 2}
+  Chaintile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
 --- !u!1 &1031095400
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,12 +196,12 @@ GameObject:
   - component: {fileID: 1031095402}
   - component: {fileID: 1031095401}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: "\u30D6\u30ED\u30C3\u30AF\u751F\u6210"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1031095401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd299395cd3b45f408f76d8e281411b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StageData: {fileID: 11400000, guid: ef8d278d59ac2944e850fb97e9b1e136, type: 2}
+  StageData: {fileID: 11400000, guid: 3d004ea0d4308034299bd6bed4a40a5c, type: 2}
   StageGrid: {fileID: 1960328615}
   PreStages: {fileID: 3822397672574743636, guid: 6628f8f20aa0aaa4aafdb0dc4146ee4f, type: 3}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
@@ -225,7 +287,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 35
+  orthographic size: 70
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -299,7 +361,7 @@ Transform:
   m_Children:
   - {fileID: 1960328616}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1960328615
 GameObject:
