@@ -8,7 +8,7 @@ public class CreateDigTilemap : MonoBehaviour
 {
     [Range(5, 121)] public int Width;
     [Range(5, 121)] public int Height;
-    [Range(1, 3)] public int thickness;
+    [Range(1, 5)] public int thickness;
 
     public GameObject StageGrid;
 
@@ -41,7 +41,7 @@ public class CreateDigTilemap : MonoBehaviour
         CellMap();
 
         //タイルマップの位置調整
-        tilemap.CompressBounds();
+        //tilemap.CompressBounds();
         StageGrid.transform.position = new Vector3(-tilemap.size.x / 2, -tilemap.size.y / 2, 0);
     }
 
@@ -55,10 +55,10 @@ public class CreateDigTilemap : MonoBehaviour
         int mx,my;
         mx = my = 0;
 
-        for (int y = Cellbound.max.y - 1; y >= Cellbound.min.y; --y)
+        for (int y = Cellbound.max.y - 1 - ((DT.Thickness - 1) / 2); y >= Cellbound.min.y; y -= DT.Thickness)
         {//左上から右下にかけてタイルを監査する
 
-            for (int x = Cellbound.min.x; x < Cellbound.max.x; ++x)
+            for (int x = Cellbound.min.x + ((DT.Thickness - 1) / 2); x < Cellbound.max.x; x += DT.Thickness)
             {
                 //参照するブロック
                 var position = new Vector3Int(x, y, 0);
