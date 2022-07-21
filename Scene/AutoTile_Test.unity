@@ -180,8 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aa70c433f53944469f81149723fd088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 44
-  Height: 54
+  Width: 47
+  Height: 24
+  thickness: 1
   StageGrid: {fileID: 1960328615}
   Basetile: {fileID: 11400000, guid: 4727914d1868e25408cab1592cc287f4, type: 2}
   Chaintile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
@@ -270,7 +271,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -287,7 +288,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 70
+  orthographic size: 15.06
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

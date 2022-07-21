@@ -23,8 +23,13 @@ namespace DigMaze {
         {
             // 2次元配列の迷路情報
             private int[,] Maze;
+            //終端位置の情報
+            public int[,] EndPosition;
+
             public int Width { get; set; }
             public int Height { get; set; }
+
+            
 
             //通路の太さ
             public int Thickness { get; set; }
@@ -68,6 +73,7 @@ namespace DigMaze {
                 this.Height = height;
                 this.Thickness = thickness;
                 Maze = new int[width, height];
+                EndPosition = new int[width, height];
                 StartCells = new List<Cell>();
             }
 
@@ -119,19 +125,32 @@ namespace DigMaze {
                 while (true)
                 {
                     var directions = new List<Direction>();
-                    if (this.Maze[x, y - 1] == Wall && this.Maze[x, y - 2] == Wall)
-                        directions.Add(Direction.Up);
+                    if (this.Maze[x, y - 1] == Wall && this.Maze[x, y - 2] == Wall) 
+                    {
+                        directions.Add(Direction.Up); 
+                    } 
                     if (this.Maze[x + 1, y] == Wall && this.Maze[x + 2, y] == Wall)
+                    {
                         directions.Add(Direction.Right);
+                    }
                     if (this.Maze[x, y + 1] == Wall && this.Maze[x, y + 2] == Wall)
+                    {
                         directions.Add(Direction.Down);
+                    }
                     if (this.Maze[x - 1, y] == Wall && this.Maze[x - 2, y] == Wall)
+                    {
                         directions.Add(Direction.Left);
+                    }
 
                     // 掘り進められない場合、ループを抜ける
-                    if (directions.Count == 0) break;
+                    if (directions.Count == 0)
+                    {
+                        EndPosition[x, y]++;
+                        break;
+                    }
 
                     // 指定座標を通路とし穴掘り候補座標から削除
+                    //EndPosition[x, y] = 0;
                     SetPath(x, y);
                     // 掘り進められる場合はランダムに方向を決めて掘り進める
                     var dirIndex = rnd.Next(directions.Count);
@@ -139,60 +158,26 @@ namespace DigMaze {
                     switch (directions[dirIndex])
                     {
                         case Direction.Up:
+                            EndPosition[x, y]++;
                             SetPath(x, --y);
                             SetPath(x, --y);
                             break;
                         case Direction.Right:
+                            EndPosition[x, y]++;
                             SetPath(++x, y);
                             SetPath(++x, y);
                             break;
                         case Direction.Down:
+                            EndPosition[x, y]++;
                             SetPath(x, ++y);
                             SetPath(x, ++y);
                             break;
                         case Direction.Left:
+                            EndPosition[x, y]++;
                             SetPath(--x, y);
                             SetPath(--x, y);
                             break;
                     }
-                    /*// 掘り進めることができる方向のリストを作成
-                    var directions = new List<Direction>();
-                    if (this.Maze[x, y - 1] == Wall && this.Maze[x, y - 2] == Wall)
-                        directions.Add(Direction.Up);
-                    if (this.Maze[x + 1, y] == Wall && this.Maze[x + 2, y] == Wall)
-                        directions.Add(Direction.Right);
-                    if (this.Maze[x, y + 1] == Wall && this.Maze[x, y + 2] == Wall)
-                        directions.Add(Direction.Down);
-                    if (this.Maze[x - 1, y] == Wall && this.Maze[x - 2, y] == Wall)
-                        directions.Add(Direction.Left);
-
-                    // 掘り進められない場合、ループを抜ける
-                    if (directions.Count == 0) break;
-
-                    // 指定座標を通路とし穴掘り候補座標から削除
-                    SetPath(x, y);
-                    // 掘り進められる場合はランダムに方向を決めて掘り進める
-                    var dirIndex = rnd.Next(directions.Count);
-                    // 決まった方向に先2マス分を通路とする
-                    switch (directions[dirIndex])
-                    {
-                        case Direction.Up:
-                            SetPath(x, --y);
-                            SetPath(x, --y);
-                            break;
-                        case Direction.Right:
-                            SetPath(++x, y);
-                            SetPath(++x, y);
-                            break;
-                        case Direction.Down:
-                            SetPath(x, ++y);
-                            SetPath(x, ++y);
-                            break;
-                        case Direction.Left:
-                            SetPath(--x, y);
-                            SetPath(--x, y);
-                            break;
-                    }*/
                 }
 
                 // どこにも掘り進められない場合、穴掘り開始候補座標から掘りなおし
@@ -200,6 +185,7 @@ namespace DigMaze {
                 var cell = GetStartCell();
                 if (cell != null)
                 {
+                    //EndPosition[cell.X, cell.Y]++;
                     Dig(cell.X, cell.Y);
                 }
             }
@@ -224,6 +210,7 @@ namespace DigMaze {
                 var rnd = new System.Random();
                 var index = rnd.Next(StartCells.Count);
                 var cell = StartCells[index];
+
                 StartCells.RemoveAt(index);
 
                 return cell;

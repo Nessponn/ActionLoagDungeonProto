@@ -20,6 +20,8 @@ public class CreateDigTilemap : MonoBehaviour
     private DigTilemap.MazeCreateor_Dig DT;
 
     private int[,] Maze;//迷路配列
+    private int[,] EndPosition; //終端位置の情報
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,8 @@ public class CreateDigTilemap : MonoBehaviour
 
         //迷路データの生成
         Maze = DT.CreateMaze();
+
+        EndPosition = DT.EndPosition;
 
         //タイルマップのサイズ調整
         tilemap.size = new Vector3Int(DT.Width * DT.Thickness, DT.Height * DT.Thickness, tilemap.size.z);
@@ -60,11 +64,29 @@ public class CreateDigTilemap : MonoBehaviour
 
             for (int x = Cellbound.min.x + ((DT.Thickness - 1) / 2); x < Cellbound.max.x; x += DT.Thickness)
             {
-                //参照するブロック
-                var position = new Vector3Int(x, y, 0);
+                
 
                 //壁（１）であれば、埋める
-                if(Maze[mx,my] == 1) tilemap.SetTile(position, Basetile);
+                if (Maze[mx, my] == 1)
+                {
+                    //指定幅を１以上指定していれば、周りも埋める
+                    for (int ey = y + ((DT.Thickness - 1) / 2); ey >= y - ((DT.Thickness - 1) / 2); ey--)
+                    {
+                        for (int ex = x - ((DT.Thickness - 1) / 2); ex <= x + ((DT.Thickness - 1) / 2); ex++)
+                        {
+                            //参照するブロック
+                            var position = new Vector3Int(ex, ey, 0);
+                            tilemap.SetTile(position, Basetile);
+                        }
+                    }
+                }
+
+                if(EndPosition[mx,my] == 2)
+                {
+                    //参照するブロック
+                    var position = new Vector3Int(x, y, 0);
+                    tilemap.SetTile(position, Chaintile);
+                }
 
                 mx++;
             }
