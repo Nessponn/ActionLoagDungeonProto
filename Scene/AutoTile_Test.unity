@@ -184,8 +184,11 @@ MonoBehaviour:
   Height: 24
   thickness: 1
   StageGrid: {fileID: 1960328615}
+  PresetMaps:
+  - {fileID: 5813396420746237246, guid: 404e6bd1dc38e4f419f68ef6f50a98cd, type: 3}
   Basetile: {fileID: 11400000, guid: 4727914d1868e25408cab1592cc287f4, type: 2}
-  Chaintile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
+  Chaintile: {fileID: 11400000, guid: 089c97ae1365a8e438f4e3b60d7e69cc, type: 2}
+  AddMaptile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
 --- !u!1 &1031095400
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +291,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15.06
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

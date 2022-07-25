@@ -57,6 +57,15 @@ namespace DigMaze {
                 Left = 3
             }
 
+            //セルの具体的な情報
+            public class MazeInfo
+            {
+                public MazeInfo()
+                {
+
+                }
+            }
+
             // コンストラクタ
             public MazeCreateor_Dig(int width, int height,int thickness)
             {
