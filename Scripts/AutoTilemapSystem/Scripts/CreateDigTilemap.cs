@@ -108,13 +108,12 @@ public class CreateDigTilemap : MonoBehaviour
     //セットしたプリセットマップをマップに転写する
     private void TranscriptionMaps(BoundsInt Cellbound)
     {
-
         int index = Random.Range(0, PresetMaps.Count);
         var PreCell = PresetMaps[index].GetComponent<Tilemap>();
         PreCell.CompressBounds();
         var PreCellbound = PresetMaps[index].GetComponent<Tilemap>().cellBounds;
 
-        //迷路の位置参照用
+        //プリマップのブロックの位置参照
         int mx, my;
         my = PreCellbound.max.y - 1;
         mx = PreCellbound.min.x;
@@ -123,22 +122,53 @@ public class CreateDigTilemap : MonoBehaviour
         var Setpos = SetMapPosition[posindex];
         tilemap.SetTile(Setpos, AddMaptile);
 
-        //Debug.Log("aaaa");
+        //プリセットマップの中身を消す
+        bool EraseTile = false;
 
         for (int y = Setpos.y + PreCellbound.max.y - 1; y >= Setpos.y + PreCellbound.min.y; y--)
         {
-            //Debug.Log("bbbb");
             for (int x =  Setpos.x + PreCellbound.min.x;x < Setpos.x + PreCellbound.max.x; x++)
             {
-                //Debug.Log("cccc");
-                if (TileCheck(PreCellbound, PreCell,new Vector3Int(mx, my, 0)) )
+                if (EraseTile)
                 {
-                    //Debug.Log("dddd");
                     var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
-                    tilemap.SetTile(position, AddMaptile);
+                    tilemap.SetTile(position, null);
                 }
+
+                //参照するプリマップのブロックの位置にブロックがあるかチェック
+                if (TileCheck(PreCellbound, PreCell,new Vector3Int(mx, my, 0)))
+                {
+                    var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
+
+                    /*//設置する位置にタイルマップのブロックがすでにあれば、消す
+                    if (!tilemap.GetTile(position))
+                    {
+                        tilemap.SetTile(position, null);
+                    }
+                    else
+                    {
+                        tilemap.SetTile(position, AddMaptile);
+                    }*/
+
+                    //ただマップを転写するだけならこの一行をアクティブ化、上のif文をコメントアウトする
+                    tilemap.SetTile(position, AddMaptile);
+
+                }
+                //プリセットマップの中身を消すための真偽値を設定
+                if (!TileCheck(PreCellbound, PreCell, new Vector3Int(mx + 1, my, 0)))
+                {
+                    EraseTile = true;
+                }
+                else
+                {
+                    EraseTile = false;
+                }
+
                 mx++;
             }
+            //設定をリセットする
+            EraseTile = false;
+
             mx = PreCellbound.min.x;
             my--;
         }
