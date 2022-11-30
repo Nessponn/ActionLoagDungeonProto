@@ -108,69 +108,122 @@ public class CreateDigTilemap : MonoBehaviour
     //セットしたプリセットマップをマップに転写する
     private void TranscriptionMaps(BoundsInt Cellbound)
     {
-        int index = Random.Range(0, PresetMaps.Count);
-        var PreCell = PresetMaps[index].GetComponent<Tilemap>();
-        PreCell.CompressBounds();
-        var PreCellbound = PresetMaps[index].GetComponent<Tilemap>().cellBounds;
-
-        //プリマップのブロックの位置参照
-        int mx, my;
-        my = PreCellbound.max.y - 1;
-        mx = PreCellbound.min.x;
-
-        int posindex = Random.Range(0, SetMapPosition.Count);
-        var Setpos = SetMapPosition[posindex];
-        tilemap.SetTile(Setpos, AddMaptile);
-
-        //プリセットマップの中身を消す
-        bool EraseTile = false;
-
-        for (int y = Setpos.y + PreCellbound.max.y - 1; y >= Setpos.y + PreCellbound.min.y; y--)
+        while (true)
         {
-            for (int x =  Setpos.x + PreCellbound.min.x;x < Setpos.x + PreCellbound.max.x; x++)
+            int index = Random.Range(0, PresetMaps.Count);
+            var PreCell = PresetMaps[index].GetComponent<Tilemap>();
+            PreCell.CompressBounds();
+            var PreCellbound = PresetMaps[index].GetComponent<Tilemap>().cellBounds;
+
+
+
+            //プリマップのブロックの位置参照
+            int mx, my;
+            my = PreCellbound.max.y - 1;
+            mx = PreCellbound.min.x;
+
+            int posindex = Random.Range(0, SetMapPosition.Count);
+            var Setpos = SetMapPosition[posindex];//迷路の随所のマップ設置位置
+            tilemap.SetTile(Setpos, AddMaptile);
+
+            PresetMaps.RemoveAt(index);
+            SetMapPosition.RemoveAt(index);
+
+            //Vector3Int[,] PrePosition = new Vector3Int[PreCell.size.x, PreCell.size.y];
+            TileBase[,] PreTile = new TileBase[PreCell.size.x, PreCell.size.y];
+
+            //プリセットマップの中身を消す
+            bool EraseTile = false;
+
+            for (int y = Setpos.y + PreCellbound.max.y - 1; y >= Setpos.y + PreCellbound.min.y; y--)
             {
-                if (EraseTile)
-                {
-                    var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
-                    tilemap.SetTile(position, null);
-                }
+                var LeftWallposition = LeftWallPosition(PreCell, my);
+                var RightWallposition = RightWallPosition(PreCell, my);
 
-                //参照するプリマップのブロックの位置にブロックがあるかチェック
-                if (TileCheck(PreCellbound, PreCell,new Vector3Int(mx, my, 0)))
+                for (int x = Setpos.x + PreCellbound.min.x; x < Setpos.x + PreCellbound.max.x; x++)
                 {
-                    var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
 
-                    /*//設置する位置にタイルマップのブロックがすでにあれば、消す
-                    if (!tilemap.GetTile(position))
+
+
+                    //Debug.Log("LeftWallposition = " + LeftWallposition);
+                    //Debug.Log("RightWallposition = " + RightWallposition);
+                    if (EraseTile)
                     {
+                        var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
                         tilemap.SetTile(position, null);
+
+                        //LeftWallPosition 略してLWP
+                        /*var LWP = new Vector3Int(LeftWallposition.x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
+
+                        var RWP = new Vector3Int(LeftWallposition.x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
+                        Debug.Log("LeftWallposition.x + 2 - 1 = " + (LeftWallposition.x + 2 - 1)
+                        + "\nLeftWallposition.y + y - 2 - (PreCell.size.y % 2) + 1 = " + ( y - 2 - (PreCell.size.y % 2) + 1)
+                        + "\nx + 2 + (PreCell.size.x % 2) - 1 = " + (x + 2 + (PreCell.size.x % 2) - 1)
+                        + "\ny - 2 - (PreCell.size.y % 2) + 1 = " + (y - 2 - (PreCell.size.y % 2) + 1));
+                        if (LWP == position)
+                        {
+                            Debug.Log("あってる");
+                        }*/
+
+
+
+                        //Debug.Log("position = " + position);
+                        //くり抜く部分のマップを登録
+                        //PrePosition[mx, my] = position;
+                        //if(TileCheck(PreCellbound, PreCell, new Vector3Int(mx, my, 0))) PreTile[mx, my] = AddMaptile;
+                    }
+
+                    //参照するプリマップのブロックの位置にブロックがあるかチェック
+                    if (TileCheck(PreCellbound, PreCell, new Vector3Int(mx, my, 0)))
+                    {
+                        var position = new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0);
+
+                        /*//設置する位置にタイルマップのブロックがすでにあれば、消す
+                        if (!tilemap.GetTile(position))
+                        {
+                            tilemap.SetTile(position, null);
+                        }
+                        else
+                        {
+                            tilemap.SetTile(position, AddMaptile);
+                        }*/
+
+                        //ただマップを転写するだけならこの一行をアクティブ化、上のif文をコメントアウトする
+                        tilemap.SetTile(position, AddMaptile);
+
+                    }
+
+                    //プリセットマップの中身を消すための真偽値を設定
+                    /*if (LeftWallposition == new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0))
+                    {
+                        EraseTile = true;
+                    }
+
+                    if(RightWallposition == new Vector3Int(x + 2 + (PreCell.size.x % 2) - 1, y - 2 - (PreCell.size.y % 2) + 1, 0))
+                    {
+                        EraseTile = false;
+                    }
+    */
+                    if (!TileCheck(PreCellbound, PreCell, new Vector3Int(mx + 1, my, 0)))
+                    {
+                        EraseTile = true;
                     }
                     else
                     {
-                        tilemap.SetTile(position, AddMaptile);
-                    }*/
+                        EraseTile = false;
+                    }
 
-                    //ただマップを転写するだけならこの一行をアクティブ化、上のif文をコメントアウトする
-                    tilemap.SetTile(position, AddMaptile);
 
+                    mx++;
                 }
-                //プリセットマップの中身を消すための真偽値を設定
-                if (!TileCheck(PreCellbound, PreCell, new Vector3Int(mx + 1, my, 0)))
-                {
-                    EraseTile = true;
-                }
-                else
-                {
-                    EraseTile = false;
-                }
+                //設定をリセットする
+                EraseTile = false;
 
-                mx++;
+                mx = PreCellbound.min.x;
+                my--;
             }
-            //設定をリセットする
-            EraseTile = false;
 
-            mx = PreCellbound.min.x;
-            my--;
+            if (PresetMaps.Count <= 0 || SetMapPosition.Count <= 0) break;
         }
 
         /*for (int y = Cellbound.max.y - 1 - ((DT.Thickness - 1) / 2); y >= Cellbound.min.y; y -= DT.Thickness)
@@ -217,6 +270,46 @@ public class CreateDigTilemap : MonoBehaviour
 
         if (tile != null) return true;
         return false;
+    }
+
+    //参照する行の、左側の壁を検出する
+    private Vector3Int LeftWallPosition(Tilemap PreTilemap,int y)
+    {
+        var bound = PreTilemap.cellBounds;
+
+        for (int x = bound.min.x; x < bound.max.x; ++x)
+        {
+            //タイルの取得
+            TileBase tile = tilemap.GetTile(new Vector3Int(x, y, 0));
+            TileBase tile2 = tilemap.GetTile(new Vector3Int(x + 1, y, 0));
+
+            if (tile != null && tile2 == null)
+            {
+                return new Vector3Int(x, y, 0);
+            }
+        }
+
+        return new Vector3Int(999, 999, 0);
+    }
+
+    //参照する行の、右側の壁を検出する
+    private Vector3Int RightWallPosition(Tilemap PreTilemap, int y)
+    {
+        var bound = PreTilemap.cellBounds;
+
+        for (int x = bound.max.x; x > bound.min.x; --x)
+        {
+            //タイルの取得
+            TileBase tile = tilemap.GetTile(new Vector3Int(x, y, 0));
+            TileBase tile2 = tilemap.GetTile(new Vector3Int(x - 1, y, 0));
+
+            if (tile != null && tile2 == null)
+            {
+                return new Vector3Int(x, y, 0);
+            }
+        }
+
+        return new Vector3Int(999, 999, 0);
     }
 
     // Update is called once per frame

@@ -25,6 +25,9 @@ namespace DigMaze {
             private int[,] Maze;
             //終端位置の情報
             public int[,] EndPosition;
+            //ブロックの軸情報
+            public string[,] Axis;
+
 
             public int Width { get; set; }
             public int Height { get; set; }
@@ -83,6 +86,7 @@ namespace DigMaze {
                 this.Thickness = thickness;
                 Maze = new int[width, height];
                 EndPosition = new int[width, height];
+                Axis = new string[width, height];
                 StartCells = new List<Cell>();
             }
 
@@ -169,22 +173,30 @@ namespace DigMaze {
                         case Direction.Up:
                             EndPosition[x, y]++;
                             SetPath(x, --y);
+                            Axis[x, y] = "Up";
                             SetPath(x, --y);
+                            Axis[x, y] = "Up";
                             break;
                         case Direction.Right:
                             EndPosition[x, y]++;
                             SetPath(++x, y);
+                            Axis[x, y] = "Right";
                             SetPath(++x, y);
+                            Axis[x, y] = "Right";
                             break;
                         case Direction.Down:
                             EndPosition[x, y]++;
                             SetPath(x, ++y);
+                            Axis[x, y] = "Down";
                             SetPath(x, ++y);
+                            Axis[x, y] = "Down";
                             break;
                         case Direction.Left:
                             EndPosition[x, y]++;
                             SetPath(--x, y);
+                            Axis[x, y] = "Left";
                             SetPath(--x, y);
+                            Axis[x, y] = "Left";
                             break;
                     }
                 }

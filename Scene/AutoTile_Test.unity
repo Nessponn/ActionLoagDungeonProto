@@ -123,6 +123,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &314972808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 314972809}
+  - component: {fileID: 314972810}
+  m_Layer: 0
+  m_Name: "\u30DF\u30CB\u30DE\u30C3\u30D7\u3000\u751F\u6210\u30C6\u30B9\u30C8\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &314972809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314972808}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &314972810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314972808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8c2a3d18d77a64a8baefc91406f544, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TileGrid: {fileID: 1628137718}
+  Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
 --- !u!1 &865093118
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,7 +186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &865093119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,12 +226,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aa70c433f53944469f81149723fd088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 47
-  Height: 24
-  thickness: 1
+  Width: 37
+  Height: 37
+  thickness: 5
   StageGrid: {fileID: 1960328615}
   PresetMaps:
   - {fileID: 4701374530156685464, guid: 172831e1493125b47bc8b9bc532d65ef, type: 3}
+  - {fileID: 6227859749749310716, guid: d940c8574faf9dd42b7cf0e754455b16, type: 3}
+  - {fileID: 6227859749749310716, guid: d940c8574faf9dd42b7cf0e754455b16, type: 3}
+  - {fileID: 7717040545057174135, guid: 999d0d2bf139ebe49b97223edf6eb28f, type: 3}
+  - {fileID: 8112587978572609219, guid: 12eed938284010e4baf37542ede45d68, type: 3}
+  - {fileID: 8112587978572609219, guid: 12eed938284010e4baf37542ede45d68, type: 3}
+  - {fileID: 4701374530156685464, guid: 172831e1493125b47bc8b9bc532d65ef, type: 3}
+  - {fileID: 7717040545057174135, guid: 999d0d2bf139ebe49b97223edf6eb28f, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 6227859749749310716, guid: d940c8574faf9dd42b7cf0e754455b16, type: 3}
+  - {fileID: 7717040545057174135, guid: 999d0d2bf139ebe49b97223edf6eb28f, type: 3}
+  - {fileID: 7982290265854396115, guid: 3bf1d6ddcd13e2242b31ea27b353db18, type: 3}
+  - {fileID: 6227859749749310716, guid: d940c8574faf9dd42b7cf0e754455b16, type: 3}
+  - {fileID: 7982290265854396115, guid: 3bf1d6ddcd13e2242b31ea27b353db18, type: 3}
+  - {fileID: 6227859749749310716, guid: d940c8574faf9dd42b7cf0e754455b16, type: 3}
+  - {fileID: 8112587978572609219, guid: 12eed938284010e4baf37542ede45d68, type: 3}
+  - {fileID: 7982290265854396115, guid: 3bf1d6ddcd13e2242b31ea27b353db18, type: 3}
+  - {fileID: 8619473000302048930, guid: 783965b3089eb314fb9bad5863d7d7ef, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 4701374530156685464, guid: 172831e1493125b47bc8b9bc532d65ef, type: 3}
+  - {fileID: 5813396420746237246, guid: 404e6bd1dc38e4f419f68ef6f50a98cd, type: 3}
+  - {fileID: 2607677932778239001, guid: d569c62d57c332347be08a7338941ee9, type: 3}
+  - {fileID: 8619473000302048930, guid: 783965b3089eb314fb9bad5863d7d7ef, type: 3}
+  - {fileID: 4701374530156685464, guid: 172831e1493125b47bc8b9bc532d65ef, type: 3}
+  - {fileID: 7982290265854396115, guid: 3bf1d6ddcd13e2242b31ea27b353db18, type: 3}
   Basetile: {fileID: 11400000, guid: 4727914d1868e25408cab1592cc287f4, type: 2}
   Chaintile: {fileID: 11400000, guid: 089c97ae1365a8e438f4e3b60d7e69cc, type: 2}
   AddMaptile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
@@ -274,7 +349,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.2966803, g: 0.4091454, b: 0.5566038, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -291,7 +366,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 20
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
