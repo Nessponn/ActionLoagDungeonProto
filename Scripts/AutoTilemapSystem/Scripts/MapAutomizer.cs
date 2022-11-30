@@ -18,6 +18,16 @@ public class MapAutomizer : MonoBehaviour
     public GameObject TileGrid;
     public TileBase Basetile;
 
+    //マップごとの情報格納庫
+    class MapInfo
+    {
+        GameObject mapobj;
+        MapInfo(int Width)
+        {
+
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,12 +48,73 @@ public class MapAutomizer : MonoBehaviour
         mapdata.size = new Vector3Int(Width,Height,mapdata.size.z);
 
         //マップの作成
-        MapAutoCreate(mapobj);
+        //MapAutoCreate(mapobj);
+
+        //マップ配列データの作成
+        MapBoundCreate(Width, Height);
     }
 
     //元となるマップデータを作成
-    void MapBoundCreate()
+    void MapBoundCreate(int Width,int Height)
     {
+        //マップ配列の作成
+        int[,] map = new int[Width,Height];
+
+        //マップの位置保存用
+        int Count;
+
+        //マップの中心点（絶対に埋まらない部分。まずは０で設定）
+        int middlepoint = 0;
+
+        for (int y = 0;y < Height;y++)
+        {//左下から右上にかけてタイルを監査する
+
+            //カウントのリセット
+            Count = 2;
+
+            for (int x = 0; x < Width; x++)
+            {
+                //マップの中心点なら飛ばす、残りカウントが０以下でも飛ばす
+                if (x != middlepoint && Count > 0)
+                {
+                    //乱数設定
+                    int rad = Random.Range(1, 10);
+
+
+                    //乱数で当たったらタイルを埋める(1/5程度)
+                    if (rad <= 2)
+                    {
+                        var position = new Vector3Int(x, y, 0);
+                        map[x, y] = 1;
+
+                        //カウントをマイナス
+                        Count--;
+
+                    }
+                    //ただしx軸の末端時点でまだ回数分設定していな場合、例外的に自動で埋める
+                    else if (Count > 0 && x == Width - 1)
+                    {
+                        map[x, y] = 1;
+
+                        //カウントをマイナス
+                        Count--;
+                    }
+                    //一つ目のタイルがx軸の末尾から３つ目の時点で設置されていない場合、例外的に自動で埋める
+                    else if (Count > 1 && x == Width - 3)
+                    {
+                        map[x, y] = 1;
+
+                        //カウントをマイナス
+                        Count--;
+
+                    }
+                }
+
+            }
+
+        }
+
+
 
     }
 

@@ -115,8 +115,6 @@ public class CreateDigTilemap : MonoBehaviour
             PreCell.CompressBounds();
             var PreCellbound = PresetMaps[index].GetComponent<Tilemap>().cellBounds;
 
-
-
             //プリマップのブロックの位置参照
             int mx, my;
             my = PreCellbound.max.y - 1;
