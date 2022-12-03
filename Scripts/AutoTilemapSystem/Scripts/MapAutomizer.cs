@@ -18,6 +18,7 @@ public class MapAutomizer : MonoBehaviour
     public GameObject TileGrid;
     public TileBase Basetile;
 
+    public int Thickness;//間隔
     //マップごとの情報格納庫
     class MapInfo
     {
@@ -31,7 +32,7 @@ public class MapAutomizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        TileMapDataCreate(15, 15);
+        TileMapDataCreate(15 * Thickness, 15 * Thickness);
     }
 
     void TileMapDataCreate(int Width,int Height)
@@ -47,21 +48,27 @@ public class MapAutomizer : MonoBehaviour
         //縦横比の設定
         mapdata.size = new Vector3Int(Width,Height,mapdata.size.z);
 
+        //タイルマップの位置調整
+        mapobj.transform.position = new Vector3(-Width / 2, -Height / 2, 0);
+
         //マップの作成
         //MapAutoCreate(mapobj);
 
         //マップ配列データの作成
-        MapBoundCreate(Width, Height);
+        MapBoundCreate(mapobj,Width, Height);
     }
 
     //元となるマップデータを作成
-    void MapBoundCreate(int Width,int Height)
+    void MapBoundCreate(GameObject mapobj,int Width,int Height)
     {
         //マップ配列の作成
-        int[,] map = new int[Width,Height];
+        int[,] mapdata = new int[Width,Height];
 
         //マップの位置保存用
         int Count;
+
+        //タイルの設置直後の制限カウント用
+        int TiledCount;
 
         //マップの中心点（絶対に埋まらない部分。まずは０で設定）
         int middlepoint = 0;
@@ -71,11 +78,12 @@ public class MapAutomizer : MonoBehaviour
 
             //カウントのリセット
             Count = 2;
+            TiledCount = 0;
 
             for (int x = 0; x < Width; x++)
             {
                 //マップの中心点なら飛ばす、残りカウントが０以下でも飛ばす
-                if (x != middlepoint && Count > 0)
+                if (x != middlepoint && Count > 0 && TiledCount <= 0)
                 {
                     //乱数設定
                     int rad = Random.Range(1, 10);
@@ -84,40 +92,83 @@ public class MapAutomizer : MonoBehaviour
                     //乱数で当たったらタイルを埋める(1/5程度)
                     if (rad <= 2)
                     {
-                        var position = new Vector3Int(x, y, 0);
-                        map[x, y] = 1;
+                        mapdata[x, y] = 1;
 
                         //カウントをマイナス
                         Count--;
-
+                        TiledCount = 2;
                     }
                     //ただしx軸の末端時点でまだ回数分設定していな場合、例外的に自動で埋める
-                    else if (Count > 0 && x == Width - 1)
+                    else if (Count > 0 && x >= Width - 1)
                     {
-                        map[x, y] = 1;
+                        mapdata[x, y] = 1;
 
                         //カウントをマイナス
                         Count--;
+                        TiledCount = 2;
                     }
                     //一つ目のタイルがx軸の末尾から３つ目の時点で設置されていない場合、例外的に自動で埋める
                     else if (Count > 1 && x == Width - 3)
                     {
-                        map[x, y] = 1;
+                        mapdata[x, y] = 1;
 
                         //カウントをマイナス
                         Count--;
-
+                        TiledCount = 2;
                     }
                 }
 
+                TiledCount--;
             }
 
+            if (Count > 0) Debug.Log("カウントまだ残ってる");
         }
 
-
-
+        MapAutoCreate(mapobj, mapdata);
     }
 
+
+    void MapAutoCreate(GameObject mapobj,int[,] mapdata)
+    {
+        //タイルマップコンポーネントの取得
+        var maptile = mapobj.GetComponent<Tilemap>();
+
+        //幅情報を取る
+        var Cellbound = mapobj.GetComponent<Tilemap>().cellBounds;
+
+        //マップデータのの位置参照用
+        int mx, my;
+        mx = my = 0;
+
+        for (int y = Cellbound.max.y - 1 - ((Thickness - 1) / 2); y >= Cellbound.min.y; y-= Thickness)
+        {//左下から右上にかけてタイルを監査する
+
+            for (int x = Cellbound.min.x ; x < Cellbound.max.x; x+= Thickness)
+            {
+                //壁（１）であれば、埋める
+                if (mapdata[mx, my] == 1)
+                {
+                    //指定幅を１以上指定していれば、周りも埋める
+                    //for (int ey = y + ((Thickness - 1) / 2); ey >= y - ((Thickness - 1) / 2); ey--)
+                    //{
+                        //参照するブロック
+                        var position = new Vector3Int(x - 1 - ((Thickness - 1) / 2), y, 0);
+                        maptile.SetTile(position, Basetile);
+                    //}
+                }
+
+                mx++;
+            }
+            Debug.Log(mx);
+
+            mx = 0;
+            my++;
+        }
+
+        Init_MapData(mapobj);
+    }
+
+    //元となるマップデータを作成（後の MapBoundCreate）
     void MapAutoCreate(GameObject mapobj)
     {
         ///
