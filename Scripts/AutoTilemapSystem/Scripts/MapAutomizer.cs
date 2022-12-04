@@ -41,21 +41,22 @@ public class MapAutomizer : MonoBehaviour
         GameObject mapobj = new GameObject();//この時実は生成処理も行われている
         mapobj.AddComponent<Tilemap>();
         mapobj.AddComponent<TilemapRenderer>();
-        
+
+        mapobj.transform.parent = TileGrid.transform;//壁生成処理のための座用を正しく登録するため、オブジェクトの子登録をしておく
+
         //タイルマップコンポーネントの取得
         var mapdata = mapobj.GetComponent<Tilemap>();
 
         //縦横比の設定
         mapdata.size = new Vector3Int(Width,Height,mapdata.size.z);
 
-        //タイルマップの位置調整
-        mapobj.transform.position = new Vector3(-Width / 2, -Height / 2, 0);
-
         //マップの作成
         //MapAutoCreate(mapobj);
 
         //マップ配列データの作成
         MapBoundCreate(mapobj,Width, Height);
+
+        TileDataDone(mapobj, Width, Height);
     }
 
     //元となるマップデータを作成
@@ -63,6 +64,7 @@ public class MapAutomizer : MonoBehaviour
     {
         //マップ配列の作成
         int[,] mapdata = new int[Width,Height];
+        int[,] mappoint = new int[Width, Height];
 
         //マップの位置保存用
         int Count;
@@ -93,6 +95,7 @@ public class MapAutomizer : MonoBehaviour
                     if (rad <= 2)
                     {
                         mapdata[x, y] = 1;
+                        mappoint[x, y] = Count;
 
                         //カウントをマイナス
                         Count--;
@@ -102,6 +105,7 @@ public class MapAutomizer : MonoBehaviour
                     else if (Count > 0 && x >= Width - 1)
                     {
                         mapdata[x, y] = 1;
+                        mappoint[x, y] = Count;
 
                         //カウントをマイナス
                         Count--;
@@ -111,6 +115,7 @@ public class MapAutomizer : MonoBehaviour
                     else if (Count > 1 && x == Width - 3)
                     {
                         mapdata[x, y] = 1;
+                        mappoint[x, y] = Count;
 
                         //カウントをマイナス
                         Count--;
@@ -124,11 +129,13 @@ public class MapAutomizer : MonoBehaviour
             if (Count > 0) Debug.Log("カウントまだ残ってる");
         }
 
-        MapAutoCreate(mapobj, mapdata);
+        MapAutoCreate(mapobj, mapdata, mappoint);
     }
 
+    List<Vector3Int> posLeft = new List<Vector3Int>();//左側のタイルマップ
+    List<Vector3Int> posRight = new List<Vector3Int>();//右側のタイルマップ
 
-    void MapAutoCreate(GameObject mapobj,int[,] mapdata)
+    void MapAutoCreate(GameObject mapobj,int[,] mapdata,int[,] mappoint)
     {
         //タイルマップコンポーネントの取得
         var maptile = mapobj.GetComponent<Tilemap>();
@@ -149,14 +156,27 @@ public class MapAutomizer : MonoBehaviour
                 if (mapdata[mx, my] == 1)
                 {
                     //指定幅を１以上指定していれば、周りも埋める
-                    //for (int ey = y + ((Thickness - 1) / 2); ey >= y - ((Thickness - 1) / 2); ey--)
-                    //{
+                    /*for (int ey = y + ((Thickness - 1) / 2); ey >= y - ((Thickness - 1) / 2); ey--)
+                    {
                         //参照するブロック
                         var position = new Vector3Int(x - 1 - ((Thickness - 1) / 2), y, 0);
                         maptile.SetTile(position, Basetile);
-                    //}
-                }
+                    }*/
 
+                    //参照するブロック
+                    var position = new Vector3Int(x - 1 - ((Thickness - 1) / 2), y, 0);
+                    maptile.SetTile(position, Basetile);
+
+                    //タイルを左右に分ける
+                    if(mappoint[mx, my] == 2)//左であれば
+                    {
+                        posLeft.Add(position);
+                    }
+                    else//右であれば
+                    {
+                        posRight.Add(position);
+                    }
+                }
                 mx++;
             }
             Debug.Log(mx);
@@ -165,7 +185,30 @@ public class MapAutomizer : MonoBehaviour
             my++;
         }
 
-        Init_MapData(mapobj);
+        //入口と出口となる部分が正常に生成されていれば、処理を続行する
+        if(!(posLeft[0].y == posRight[0].y && posLeft[posLeft.Count - 1].y == posRight[posRight.Count - 1].y))
+        {
+            Debug.LogError("正常に生成されませんでした");
+            return;
+        }
+
+        for(int x = 0; x < posLeft.Count - 1; x++)
+        {
+            AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[x], posLeft[x + 1]);//左
+        }
+
+        //壁を作る処理
+        
+/*
+        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[1], posLeft[2]);//左
+
+        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[2], posLeft[3]);//左
+
+        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[3], posLeft[4]);//左*/
+
+        //AStarPath.Instance.astarSearchPathFinding(maptile, posRight);//右
+
+        //Init_MapData(mapobj);
     }
 
     //元となるマップデータを作成（後の MapBoundCreate）
@@ -246,6 +289,13 @@ public class MapAutomizer : MonoBehaviour
     {
         //GameObject obj = Instantiate(mapdata.transform.gameObject, TileGrid.transform.position, Quaternion.identity);
 
-        mapobj.transform.parent = TileGrid.transform;
+    }
+
+    void TileDataDone(GameObject mapobj, int Width, int Height)
+    {
+
+        //タイルマップの位置調整
+        mapobj.transform.position = new Vector3(-Width / 2, -Height / 2, 0);
+
     }
 }
