@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 
 //マップオートマイザー
-public class MapAutomizer : MonoBehaviour
+public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 {
     /// <summary>
     /// 概要
@@ -15,24 +15,16 @@ public class MapAutomizer : MonoBehaviour
     /// </summary>
     /// 
 
+    public Vector2Int size;
     public GameObject TileGrid;
     public TileBase Basetile;
 
     public int Thickness;//間隔
-    //マップごとの情報格納庫
-    class MapInfo
-    {
-        GameObject mapobj;
-        MapInfo(int Width)
-        {
-
-        }
-    }
-
+    
     // Start is called before the first frame update
     void Start()
     {
-        TileMapDataCreate(15 * Thickness, 15 * Thickness);
+        TileMapDataCreate(size.x * Thickness, size.y * Thickness);
     }
 
     void TileMapDataCreate(int Width,int Height)
@@ -81,7 +73,8 @@ public class MapAutomizer : MonoBehaviour
             //カウントのリセット
             Count = 2;
             TiledCount = 0;
-
+            Debug.Log("x[" + y + "] =" + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height)));
+            
             for (int x = 0; x < Width; x++)
             {
                 //マップの中心点なら飛ばす、残りカウントが０以下でも飛ばす
@@ -94,15 +87,34 @@ public class MapAutomizer : MonoBehaviour
                     //乱数で当たったらタイルを埋める(1/5程度)
                     if (rad <= 2)
                     {
-                        mapdata[x, y] = 1;
-                        mappoint[x, y] = Count;
+                        if(Count == 2)
+                        {
+                            //マップの真ん中あたりが膨らむ様に、調整
+                            int X = x - ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height));
+                            if (X < 0) X = 0;
+
+                            mapdata[X, y] = 1;
+                            mappoint[x, y] = Count;
+                        }
+                        else if(Count == 1)
+                        {
+                            int X = x + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height));
+                            if (X > Width - 2 * Thickness) X = Width - 2 * Thickness;
+
+                            //マップの真ん中あたりが膨らむ様に、調整
+                            mapdata[X, y] = 1;
+                            mappoint[x, y] = Count;
+                        }
+
+                        /*mapdata[x, y] = 1;
+                        mappoint[x, y] = Count;*/
 
                         //カウントをマイナス
                         Count--;
                         TiledCount = 2;
                     }
                     //ただしx軸の末端時点でまだ回数分設定していな場合、例外的に自動で埋める
-                    else if (Count > 0 && x >= Width - 1)
+                    else if (Count > 0 && x >= Width - 2 * Thickness)
                     {
                         mapdata[x, y] = 1;
                         mappoint[x, y] = Count;
@@ -112,7 +124,7 @@ public class MapAutomizer : MonoBehaviour
                         TiledCount = 2;
                     }
                     //一つ目のタイルがx軸の末尾から３つ目の時点で設置されていない場合、例外的に自動で埋める
-                    else if (Count > 1 && x == Width - 3)
+                    else if (Count > 1 && x == Width - 3 * Thickness)
                     {
                         mapdata[x, y] = 1;
                         mappoint[x, y] = Count;
@@ -132,9 +144,6 @@ public class MapAutomizer : MonoBehaviour
         MapAutoCreate(mapobj, mapdata, mappoint);
     }
 
-    List<Vector3Int> posLeft = new List<Vector3Int>();//左側のタイルマップ
-    List<Vector3Int> posRight = new List<Vector3Int>();//右側のタイルマップ
-
     void MapAutoCreate(GameObject mapobj,int[,] mapdata,int[,] mappoint)
     {
         //タイルマップコンポーネントの取得
@@ -142,6 +151,9 @@ public class MapAutomizer : MonoBehaviour
 
         //幅情報を取る
         var Cellbound = mapobj.GetComponent<Tilemap>().cellBounds;
+
+        List<Vector3Int> posLeft = new List<Vector3Int>();//左側のタイルマップ
+        List<Vector3Int> posRight = new List<Vector3Int>();//右側のタイルマップ
 
         //マップデータのの位置参照用
         int mx, my;
@@ -179,7 +191,7 @@ public class MapAutomizer : MonoBehaviour
                 }
                 mx++;
             }
-            Debug.Log(mx);
+            //Debug.Log(mx);
 
             mx = 0;
             my++;
@@ -188,27 +200,102 @@ public class MapAutomizer : MonoBehaviour
         //入口と出口となる部分が正常に生成されていれば、処理を続行する
         if(!(posLeft[0].y == posRight[0].y && posLeft[posLeft.Count - 1].y == posRight[posRight.Count - 1].y))
         {
-            Debug.LogError("正常に生成されませんでした");
+            //きちんと点が生成されていなければ、再生成処理を行う
+            Debug.LogError("正常に生成されませんでした。再生成を行います");
+
+            Destroy(mapobj);
+
+            TileMapDataCreate(size.x * Thickness, size.y * Thickness);
+
             return;
         }
 
-        for(int x = 0; x < posLeft.Count - 1; x++)
+        //数値確認デバック用
+        for (int x = 0; x < posLeft.Count - 1; x++)
         {
+            //float X = posLeft[x].y / (Thickness * Thickness);
+            float X = posLeft[x].y / Thickness;
+
+            //Debug.Log("posLeft[" + x + "].y = " + posLeft[x].y);
+            //Debug.Log("X[" + x + "] = " + ((-Mathf.Pow(X, 2)) + (5 * X) + 4));
+            Debug.Log("X[" + x + "] = " + (((-Mathf.Pow(X, 2) + (size.x  * X)) / size.x ) * 2 + 8));
+
+        }
+        //壁を作る処理
+        for (int x = 0; x < posLeft.Count - 1; x++)
+        {
+            float X = posLeft[x].y / Thickness;
+
+            for (int ex = x + 1; ex < posLeft.Count - 1; ex++)
+            {
+                //次の点として、適切かどうかを決める
+                if (Mathf.Abs(posLeft[x].x - posLeft[ex].x) < size.x || posLeft[ex] == posLeft[posLeft.Count - 1])
+                {
+                    //必要以上に離れていなければ、中継点として扱う
+                    //または、次の点が最後の点であれば、それは中継点として扱う
+
+                    break;
+                }
+                else
+                {
+                    //不適合であれば、候補として消す
+                    maptile.SetTile(posLeft[ex],null);
+                    posLeft.RemoveAt(ex);
+                    //減らした分だけ、exも調整する
+                    ex --;
+                }
+            }
+
+            //Debug.Log("posLeft[" + x + "] =" + posLeft[x].x);
+            //Debug.Log("CelltoWorld:posLeft[" + x + "] =" + maptile.CellToWorld(posLeft[x]).x);
             AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[x], posLeft[x + 1]);//左
         }
 
-        //壁を作る処理
-        
-/*
-        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[1], posLeft[2]);//左
+        for (int x = 0; x < posRight.Count - 1; x++)
+        {
+            float X = posRight[x].y / Thickness;
 
-        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[2], posLeft[3]);//左
+            for (int ex = x + 1; ex < posRight.Count - 1; ex++)
+            {
 
-        AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[3], posLeft[4]);//左*/
+                //次の点として、適切かどうかを決める
+                if (Mathf.Abs(posRight[x].x - posRight[ex].x) < size.x || posRight[ex] == posRight[posRight.Count - 1])
+                {
+                    //必要以上に離れていなければ、中継点として扱う
+                    //または、次の点が最後の点であれば、それは中継点として扱う
 
-        //AStarPath.Instance.astarSearchPathFinding(maptile, posRight);//右
+                    break;
+                }
+                else
+                {
+                    //不適合であれば、候補として消す
+                    maptile.SetTile(posRight[ex], null);
+                    posRight.RemoveAt(ex);
+                    //減らした分だけ、exも調整する
+                    ex--;
+                }
+            }
 
-        //Init_MapData(mapobj);
+            AStarPath.Instance.astarSearchPathFinding(maptile, posRight[x], posRight[x + 1]);//左
+        }
+
+        //上下の枠を閉じる
+        for(int x = posLeft[0].x;x <= posRight[0].x; x++)
+        {
+            var position = posLeft[0];
+            position.x = x;
+
+            maptile.SetTile(position, Basetile);
+        }
+
+        for (int x = posLeft[posLeft.Count - 1].x; x <= posRight[posRight.Count - 1].x; x++)
+        {
+            var position = posLeft[posLeft.Count - 1];
+            position.x = x;
+
+            if (maptile.HasTile(position)) maptile.SetTile(position, null);
+            else maptile.SetTile(position, Basetile);
+        }
     }
 
     //元となるマップデータを作成（後の MapBoundCreate）

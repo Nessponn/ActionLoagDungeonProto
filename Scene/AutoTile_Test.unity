@@ -252,6 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa8c2a3d18d77a64a8baefc91406f544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: {x: 15, y: 15}
   TileGrid: {fileID: 1628137718}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
   Thickness: 3
@@ -1431,7 +1432,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 30
+  orthographic size: 45
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
