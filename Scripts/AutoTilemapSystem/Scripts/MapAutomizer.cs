@@ -24,10 +24,18 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
     // Start is called before the first frame update
     void Start()
     {
-        TileMapDataCreate(size.x * Thickness, size.y * Thickness);
+        List<GameObject> mapobj = new List<GameObject>();
+
+        for(int x = 0;x < 10; x++) mapobj.Add(TileMapDataCreate(size.x * Thickness, size.y * Thickness));
+
+        for (int x = 0; x < 10; x++) 
+        { 
+            if(x % 2 == 0)mapobj[x].transform.position = new Vector2(size.x * x * 2 - 75, size.y * 2);
+            else mapobj[x].transform.position = new Vector2(size.x * x * 2 - 75, -size.y * 2);
+        }
     }
 
-    void TileMapDataCreate(int Width,int Height)
+    GameObject TileMapDataCreate(int Width,int Height)
     {
         //マップデータの作成
         GameObject mapobj = new GameObject();//この時実は生成処理も行われている
@@ -49,6 +57,8 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
         MapBoundCreate(mapobj,Width, Height);
 
         TileDataDone(mapobj, Width, Height);
+
+        return mapobj;
     }
 
     //元となるマップデータを作成
@@ -67,6 +77,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
         //マップの中心点（絶対に埋まらない部分。まずは０で設定）
         int middlepoint = 0;
 
+        Debug.Log("Width =" + Width);
         for (int y = 0;y < Height;y++)
         {//左下から右上にかけてタイルを監査する
 
@@ -85,26 +96,25 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 
 
                     //乱数で当たったらタイルを埋める(1/5程度)
-                    if (rad <= 2)
+                    if (rad > 8)
                     {
                         if(Count == 2)
                         {
                             //マップの真ん中あたりが膨らむ様に、調整
-                            int X = x - ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height));
-                            if (X < 0) X = 0;
-
-                            mapdata[X, y] = 1;
+                           
+                            mapdata[x, y] = 1;
                             mappoint[x, y] = Count;
                         }
                         else if(Count == 1)
                         {
-                            int X = x + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height));
-                            if (X > Width - 2 * Thickness) X = Width - 2 * Thickness;
+                            int X = x + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height)) * 2 ;
+                            if (X > Width - 1) X = Width - 1;
 
                             //マップの真ん中あたりが膨らむ様に、調整
                             mapdata[X, y] = 1;
-                            mappoint[x, y] = Count;
+                            mappoint[X, y] = Count;
                         }
+
 
                         /*mapdata[x, y] = 1;
                         mappoint[x, y] = Count;*/
@@ -114,7 +124,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
                         TiledCount = 2;
                     }
                     //ただしx軸の末端時点でまだ回数分設定していな場合、例外的に自動で埋める
-                    else if (Count > 0 && x >= Width - 2 * Thickness)
+                    else if (Count > 0 && x == Width - 1)
                     {
                         mapdata[x, y] = 1;
                         mappoint[x, y] = Count;
@@ -124,7 +134,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
                         TiledCount = 2;
                     }
                     //一つ目のタイルがx軸の末尾から３つ目の時点で設置されていない場合、例外的に自動で埋める
-                    else if (Count > 1 && x == Width - 3 * Thickness)
+                    else if (Count > 1 && x == Width - 3)
                     {
                         mapdata[x, y] = 1;
                         mappoint[x, y] = Count;
@@ -162,7 +172,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
         for (int y = Cellbound.max.y - 1 - ((Thickness - 1) / 2); y >= Cellbound.min.y; y-= Thickness)
         {//左下から右上にかけてタイルを監査する
 
-            for (int x = Cellbound.min.x ; x < Cellbound.max.x; x+= Thickness)
+            for (int x = Cellbound.min.x ; x < Cellbound.max.x; x++)
             {
                 //壁（１）であれば、埋める
                 if (mapdata[mx, my] == 1)
@@ -198,19 +208,19 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
         }
 
         //入口と出口となる部分が正常に生成されていれば、処理を続行する
-        if(!(posLeft[0].y == posRight[0].y && posLeft[posLeft.Count - 1].y == posRight[posRight.Count - 1].y))
+        if (!(posLeft[0].y == posRight[0].y && posLeft[posLeft.Count - 1].y == posRight[posRight.Count - 1].y))
         {
             //きちんと点が生成されていなければ、再生成処理を行う
             Debug.LogError("正常に生成されませんでした。再生成を行います");
 
-            Destroy(mapobj);
+            //Destroy(mapobj);
 
-            TileMapDataCreate(size.x * Thickness, size.y * Thickness);
+            //TileMapDataCreate(size.x * Thickness, size.y * Thickness);
 
             return;
         }
 
-        //数値確認デバック用
+        /*//数値確認デバック用
         for (int x = 0; x < posLeft.Count - 1; x++)
         {
             //float X = posLeft[x].y / (Thickness * Thickness);
@@ -220,7 +230,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
             //Debug.Log("X[" + x + "] = " + ((-Mathf.Pow(X, 2)) + (5 * X) + 4));
             Debug.Log("X[" + x + "] = " + (((-Mathf.Pow(X, 2) + (size.x  * X)) / size.x ) * 2 + 8));
 
-        }
+        }*/
         //壁を作る処理
         for (int x = 0; x < posLeft.Count - 1; x++)
         {
@@ -229,7 +239,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
             for (int ex = x + 1; ex < posLeft.Count - 1; ex++)
             {
                 //次の点として、適切かどうかを決める
-                if (Mathf.Abs(posLeft[x].x - posLeft[ex].x) < size.x || posLeft[ex] == posLeft[posLeft.Count - 1])
+                if (Mathf.Abs(posLeft[x].x - posLeft[ex].x) < size.x - ((int)((-Mathf.Pow(x, 2) + (size.y * Thickness * x)) / size.y * Thickness)) / Thickness || posLeft[ex] == posLeft[posLeft.Count - 1])
                 {
                     //必要以上に離れていなければ、中継点として扱う
                     //または、次の点が最後の点であれば、それは中継点として扱う
@@ -257,9 +267,8 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 
             for (int ex = x + 1; ex < posRight.Count - 1; ex++)
             {
-
                 //次の点として、適切かどうかを決める
-                if (Mathf.Abs(posRight[x].x - posRight[ex].x) < size.x || posRight[ex] == posRight[posRight.Count - 1])
+                if (Mathf.Abs(posRight[x].x - posRight[ex].x) < size.x - ((int)((-Mathf.Pow(x, 2) + (size.y * Thickness * x)) / size.y * Thickness)) / Thickness || posRight[ex] == posRight[posRight.Count - 1])
                 {
                     //必要以上に離れていなければ、中継点として扱う
                     //または、次の点が最後の点であれば、それは中継点として扱う
