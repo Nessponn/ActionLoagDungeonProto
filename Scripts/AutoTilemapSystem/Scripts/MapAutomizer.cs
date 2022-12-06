@@ -18,6 +18,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
     public Vector2Int size;
     public GameObject TileGrid;
     public TileBase Basetile;
+    public TileBase Itemtile;
 
     public int Thickness;//間隔
     
@@ -33,6 +34,15 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
             if(x % 2 == 0)mapobj[x].transform.position = new Vector2(size.x * x * 2 - 75, size.y * 2);
             else mapobj[x].transform.position = new Vector2(size.x * x * 2 - 75, -size.y * 2);
         }
+    }
+
+    class MapInfo
+    {
+        public GameObject mapobj { get; set; }
+
+        public Vector2Int size { get; set; }
+
+
     }
 
     GameObject TileMapDataCreate(int Width,int Height)
@@ -77,14 +87,14 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
         //マップの中心点（絶対に埋まらない部分。まずは０で設定）
         int middlepoint = 0;
 
-        Debug.Log("Width =" + Width);
+        //Debug.Log("Width =" + Width);
         for (int y = 0;y < Height;y++)
         {//左下から右上にかけてタイルを監査する
 
             //カウントのリセット
             Count = 2;
             TiledCount = 0;
-            Debug.Log("x[" + y + "] =" + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height)));
+            //Debug.Log("x[" + y + "] =" + ((int)((-Mathf.Pow(y, 2) + (Height * y)) / Height)));
             
             for (int x = 0; x < Width; x++)
             {
@@ -258,7 +268,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 
             //Debug.Log("posLeft[" + x + "] =" + posLeft[x].x);
             //Debug.Log("CelltoWorld:posLeft[" + x + "] =" + maptile.CellToWorld(posLeft[x]).x);
-            AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[x], posLeft[x + 1]);//左
+            AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[x], posLeft[x + 1],0);//左
         }
 
         for (int x = 0; x < posRight.Count - 1; x++)
@@ -285,7 +295,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
                 }
             }
 
-            AStarPath.Instance.astarSearchPathFinding(maptile, posRight[x], posRight[x + 1]);//左
+            AStarPath.Instance.astarSearchPathFinding(maptile, posRight[x], posRight[x + 1],1);//右
         }
 
         //上下の枠を閉じる
@@ -304,6 +314,56 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 
             if (maptile.HasTile(position)) maptile.SetTile(position, null);
             else maptile.SetTile(position, Basetile);
+        }
+    }
+
+    //ギミックを設置する処理
+    public void Gimmick_Init(Tilemap maptile,List<Vector3Int> GimmickStartPos, List<Vector3Int> GimmickGoalPos,int dir)
+    {
+        Debug.Log("GimmickStartPos.Count = " + GimmickStartPos.Count);
+        Debug.Log("GimmickGoalPos.Count = " + GimmickGoalPos.Count);
+
+        //何も入っていなければ、処理を飛ばす
+        if (GimmickStartPos[0] != new Vector3Int(-9999, -9999, 0))
+        {
+            for (int x = 0; x < GimmickStartPos.Count - 1; x++)//一番最後はありえない値なので、除外する意味で-1する
+            {
+                //一定以上幅があれば、ギミックを設置する
+                if ((GimmickGoalPos[x].y - GimmickStartPos[x].y) >= 5)
+                {
+                    if (dir == 0)//右側に生成
+                    {
+                        var position = new Vector3Int(GimmickStartPos[x].x + 1, (GimmickGoalPos[x].y - GimmickStartPos[x].y) / 2, 0);
+
+                        //maptile.SetTile(position, Itemtile);
+                    }
+                    else//左側に生成
+                    {
+                        var position = new Vector3Int(GimmickStartPos[x].x - 1, (GimmickGoalPos[x].y - GimmickStartPos[x].y) / 2, 0);
+
+                        //maptile.SetTile(position, Itemtile);
+                    }
+                }
+            }
+        } 
+    }
+
+    //生成マップの回転処理(左に９０度回転)
+    void Rotate(Tilemap map)
+    {
+        //幅情報を取る
+        var Cellbound = map.cellBounds;
+
+        //GameObject obj = Instantiate(mapdata.transform.gameObject, TileGrid.transform.position, Quaternion.identity);
+        for (int y = Cellbound.max.y - 1 - ((Thickness - 1) / 2); y >= Cellbound.min.y; y -= Thickness)
+        {//左下から右上にかけてタイルを監査する
+
+            for (int x = Cellbound.min.x; x < Cellbound.max.x; x++)
+            {
+                //参照するブロック
+                var position = new Vector3Int(x - 1 - ((Thickness - 1) / 2), y, 0);
+                map.SetTile(position, Basetile);
+            }
         }
     }
 
@@ -383,8 +443,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
     //マップの生成（テスト機能）
     void Init_MapData(GameObject mapobj)
     {
-        //GameObject obj = Instantiate(mapdata.transform.gameObject, TileGrid.transform.position, Quaternion.identity);
-
+        
     }
 
     void TileDataDone(GameObject mapobj, int Width, int Height)

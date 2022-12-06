@@ -98,7 +98,7 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
     }*/
 
     //MapAutomizerから得られたデータから、壁生成を行う
-    public void astarSearchPathFinding(Tilemap map,Vector3Int Startpos,Vector3Int Goalpos)
+    public void astarSearchPathFinding(Tilemap map,Vector3Int Startpos,Vector3Int Goalpos , int dir)
     {
         List<cellInfo> cellInfoList = new List<cellInfo>();
 
@@ -123,29 +123,34 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
 
         start.heuristic = Vector2.Distance(start.pos, goal);
 
+        //ギミック生成用変数
+        int Count = 0;
+        List<Vector3Int> GimmickStartPos = new List<Vector3Int>() { new Vector3Int(-9999, -9999, 0) };
+        List<Vector3Int> GimmickGoalPos = new List<Vector3Int>() { new Vector3Int(-9999, -9999, 0) };
 
         //オープンが存在する限りループ
         //調査対象として、含まれているマス目がある限り、それが終わりのマス目でなければ続く
         //なお、cellInfoはwhile内でも増え続ける
         while (cellInfoList.Where(x => x.isOpen == true).Select(x => x).Count() > 0 && exitFlg == false)
         {
-            //Debug.Log("ここまで走ってる");
-
             //最小コストのノードを探す
             //経路探索の前に、調査対象のみを条件とし、探索済みの進行方向の推定コストが、最も少ないものを選出。
             cellInfo minCell = cellInfoList.Where(x => x.isOpen == true).OrderBy(x => x.sumConst).Select(x => x).First();
 
             //調査対象の開拓を行う
-            openSurround(minCell, map,cellInfoList);
+            openSurround(minCell, map,cellInfoList , Count, GimmickStartPos, GimmickGoalPos);
 
             // 中心のノードを閉じる
             minCell.isOpen = false;
         }
+
+        //ギミックの生成処理に移る
+        MapAutomizer.Instance.Gimmick_Init(map,GimmickStartPos, GimmickGoalPos, dir);
     }
     /// <summary>
     /// 周辺のセルを開きます
     /// </summary>
-    private void openSurround(cellInfo center,Tilemap map, List<cellInfo> cellInfoList)
+    private void openSurround(cellInfo center,Tilemap map, List<cellInfo> cellInfoList , int Count,List<Vector3Int> GimmickStartPos, List<Vector3Int> GimmickGoalPos)
     {
         // ポジションをVector3Intへ変換
         Vector3Int centerPos = map.WorldToCell(center.pos);
@@ -159,9 +164,8 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                 if (((i != 0 && j == 0) || (i == 0 && j != 0)) && !(i == 0 && j == 0))
                 {
                     //進行方向の確定
+                    //かならず上下左右のどちらかに進んでいる
                     Vector3Int posInt = new Vector3Int(centerPos.x + i, centerPos.y + j, centerPos.z);
-
-                    //進行方向にタイルがセットされており、かならず上下左右のどちらかに進んでいるとき
 
                     // リストに存在しないか探す
                     Vector3 pos = map.CellToWorld(posInt);
@@ -177,6 +181,30 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                         cell.parent = center.pos;
                         cell.isOpen = true;
                         cellInfoList.Add(cell);
+
+                        //一定以上、下に連続で進んでいれば、その中間の位置にギミックをつける
+                        //始点と終点を決める
+                        if(j == -1)
+                        {
+                            if(GimmickStartPos[Count] == new Vector3Int(-9999, -9999, 0))
+                            {
+                                GimmickStartPos[Count] = map.WorldToCell(pos);
+                            }
+                        }
+                        //下以外に進んだら、カウントは
+                        else
+                        {
+                            if (GimmickStartPos[Count] != new Vector3Int(-9999, -9999, 0))
+                            {
+                                //下が途切れた地点をゴールとして登録する
+                                GimmickGoalPos[Count] = map.WorldToCell(pos);
+
+                                Count++;
+                                GimmickStartPos.Add(new Vector3Int(-9999, -9999, 0));
+                                GimmickGoalPos.Add(new Vector3Int(-9999, -9999, 0));
+                            }
+                            
+                        }
 
                         // ゴールの位置と一致したら終了
                         if (map.WorldToCell(goal) == map.WorldToCell(pos))

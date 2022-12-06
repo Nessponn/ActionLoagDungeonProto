@@ -255,6 +255,7 @@ MonoBehaviour:
   size: {x: 15, y: 15}
   TileGrid: {fileID: 1628137718}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
+  Itemtile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
   Thickness: 3
 --- !u!114 &314972811
 MonoBehaviour:
