@@ -98,7 +98,7 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
     }*/
 
     //MapAutomizerから得られたデータから、壁生成を行う
-    public void astarSearchPathFinding(Tilemap map,Vector3Int Startpos,Vector3Int Goalpos , int dir)
+    public void astarSearchPathFinding(MapInfo mapInfo, Vector3Int Startpos, Vector3Int Goalpos , int dir)
     {
         List<cellInfo> cellInfoList = new List<cellInfo>();
 
@@ -118,8 +118,8 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
 
         exitFlg = false;
 
-        goal = map.WorldToCell(Startpos);
-        start.pos = map.WorldToCell(Goalpos);
+        goal = mapInfo.map.WorldToCell(Startpos);
+        start.pos = mapInfo.map.WorldToCell(Goalpos);
 
         start.heuristic = Vector2.Distance(start.pos, goal);
 
@@ -138,22 +138,23 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
             cellInfo minCell = cellInfoList.Where(x => x.isOpen == true).OrderBy(x => x.sumConst).Select(x => x).First();
 
             //調査対象の開拓を行う
-            openSurround(minCell, map,cellInfoList , Count, GimmickStartPos, GimmickGoalPos);
+            //openSurround(minCell, map,cellInfoList , Count, GimmickStartPos, GimmickGoalPos);
+            openSurround(minCell, cellInfoList,mapInfo);
 
             // 中心のノードを閉じる
             minCell.isOpen = false;
         }
 
         //ギミックの生成処理に移る
-        MapAutomizer.Instance.Gimmick_Init(map,GimmickStartPos, GimmickGoalPos, dir);
+        //MapAutomizer.Instance.Gimmick_Init(map,GimmickStartPos, GimmickGoalPos, dir);
     }
     /// <summary>
     /// 周辺のセルを開きます
     /// </summary>
-    private void openSurround(cellInfo center,Tilemap map, List<cellInfo> cellInfoList , int Count,List<Vector3Int> GimmickStartPos, List<Vector3Int> GimmickGoalPos)
+    private void openSurround(cellInfo center, List<cellInfo> cellInfoList ,MapInfo mapInfo)
     {
         // ポジションをVector3Intへ変換
-        Vector3Int centerPos = map.WorldToCell(center.pos);
+        Vector3Int centerPos = mapInfo.map.WorldToCell(center.pos);
 
         //-1～1の範囲で探索
         for (int i = -1; i < 2; i++)
@@ -168,7 +169,7 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                     Vector3Int posInt = new Vector3Int(centerPos.x + i, centerPos.y + j, centerPos.z);
 
                     // リストに存在しないか探す
-                    Vector3 pos = map.CellToWorld(posInt);
+                    Vector3 pos = mapInfo.map.CellToWorld(posInt);
                     pos = new Vector3(pos.x + 0.5f, pos.y + 0.5f, pos.z);
                     if (cellInfoList.Where(x => x.pos == pos).Select(x => x).Count() == 0)
                     {
@@ -182,9 +183,9 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                         cell.isOpen = true;
                         cellInfoList.Add(cell);
 
-                        //一定以上、下に連続で進んでいれば、その中間の位置にギミックをつける
+                        /*//一定以上、下に連続で進んでいれば、その中間の位置にギミックをつける
                         //始点と終点を決める
-                        if(j == -1)
+                        if(i == 0 && j == -1)
                         {
                             if(GimmickStartPos[Count] == new Vector3Int(-9999, -9999, 0))
                             {
@@ -204,17 +205,46 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                                 GimmickGoalPos.Add(new Vector3Int(-9999, -9999, 0));
                             }
                             
-                        }
+                        }*/
 
                         // ゴールの位置と一致したら終了
-                        if (map.WorldToCell(goal) == map.WorldToCell(pos))
+                        if (mapInfo.map.WorldToCell(goal) == mapInfo.map.WorldToCell(pos))
                         {
                             cellInfo preCell = cell;
+
+                            //片側の方だけの実装を想定
+                            if(mapInfo.GimmickStartPos[0] == new Vector3Int(-9999, -9999, 0))
+                            {
+                                mapInfo.GimmickStartPos[0] = mapInfo.map.WorldToCell(preCell.pos);
+                            }
+
                             while (preCell.parent != new Vector3(-9999, -9999, 0))
                             {
-                                map.SetTile(map.WorldToCell(preCell.pos), replaceTile);
+                                //Debug.Log(mapInfo.map.WorldToCell(preCell.pos));
+
+                                //マスの設置
+                                mapInfo.map.SetTile(mapInfo.map.WorldToCell(preCell.pos), replaceTile);
+
+                                //設置したタイルの情報保持
+                                var prevCell = preCell;
+
+                                //次に設置するタイルの情報
                                 preCell = cellInfoList.Where(x => x.pos == preCell.parent).Select(x => x).First();
+
+                                //ギミック生成処理
+                                //前のマスとx軸が違ったら、そこでいったん区切る
+                                if(prevCell.pos.x != preCell.pos.x)
+                                {
+                                    //Debug.Log("曲がった");
+
+                                    //現在のマス目で登録
+                                    mapInfo.GimmickGoalPos.Add(mapInfo.map.WorldToCell(prevCell.pos));
+
+                                    //次のマス目を、新たなスタート地点として登録
+                                    mapInfo.GimmickStartPos.Add(mapInfo.map.WorldToCell(preCell.pos));
+                                }
                             }
+                            
 
                             exitFlg = true;
                             return;
