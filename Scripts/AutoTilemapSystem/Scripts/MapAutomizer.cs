@@ -33,6 +33,8 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
 
     public int Thickness;//間隔
 
+    [Range(0,2)]public float Reaction;
+
     private List<MapInfo> mapInfo = new List<MapInfo>();
     
     // Start is called before the first frame update
@@ -91,7 +93,7 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
     //元となるマップデータを作成
     void MapBoundCreate(MapInfo mapInfo)
     {
-        //マップ配列の作成
+        /*//マップ配列の作成
         int[,] mapdata = new int[mapInfo.size.x, mapInfo.size.y];
         int[,] mappoint = new int[mapInfo.size.x, mapInfo.size.y];
 
@@ -143,8 +145,8 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
                         }
 
 
-                        /*mapdata[x, y] = 1;
-                        mappoint[x, y] = Count;*/
+                        *//*mapdata[x, y] = 1;
+                        mappoint[x, y] = Count;*//*
 
                         //カウントをマイナス
                         Count--;
@@ -176,10 +178,238 @@ public class MapAutomizer : SingletonMonoBehaviourFast<MapAutomizer>
             }
 
             if (Count > 0) Debug.Log("カウントまだ残ってる");
+        }*/
+
+        //MapAutoCreate(mapInfo, mapdata, mappoint);
+
+
+        List<Vector3Int> posLeft = LeftPointerFromMiddle(mapInfo);//左側のタイルマップ
+        List<Vector3Int> posRight = RightPointerFromMiddle(mapInfo);//右側のタイルマップ
+
+        //まずは左側を生成
+
+        Debug.Log("posLeft.Count = " + posLeft.Count);
+        Debug.Log("posRight.Count = " + posRight.Count);
+
+        MapAutoCreate(mapInfo, posLeft, posRight);
+    }
+
+    //中央から左端へ点を打つ
+    List<Vector3Int> LeftPointerFromMiddle(MapInfo mapInfo)
+    {
+        List<Vector3Int> posLeft = new List<Vector3Int>();//左側のタイルマップ
+
+        //幅情報を取る
+        var Cellbound = mapInfo.map.cellBounds;
+
+
+        //Debug.Log(Cellbound.max.x);
+
+        for (int y = Cellbound.max.y - 1 - ((Thickness - 1) / 2); y >= Cellbound.min.y; y -= Thickness)
+        {//左下から右上にかけてタイルを監査する
+
+            //中央までで打ち止め
+            for (int x = Cellbound.max.x / 2 - 1; x >= 0; x--)
+            {
+
+                //乱数設定
+                int rad = Random.Range(1, 10);
+
+
+                //乱数で当たったらタイルを埋める(1/5程度)
+                if (rad > 8)
+                {
+                    var position = new Vector3Int(x, y, 0);
+                    posLeft.Add(position);
+
+                    break;///点が打たれた時点で、そのx軸での生成処理は終了
+                }
+
+                if(x == 0)
+                {
+                    var position = new Vector3Int(x, y, 0);
+                    posLeft.Add(position);
+
+                    break;///点が打たれた時点で、そのx軸での生成処理は終了
+                }
+            }
         }
 
-        MapAutoCreate(mapInfo, mapdata, mappoint);
+        return posLeft;
     }
+
+    //中央から右端へ点を打つ
+    List<Vector3Int> RightPointerFromMiddle(MapInfo mapInfo)
+    {
+        List<Vector3Int> posRight = new List<Vector3Int>();//右側のタイルマップ
+
+        //幅情報を取る
+        var Cellbound = mapInfo.map.cellBounds;
+
+        for (int y = Cellbound.max.y - 1 - ((Thickness - 1) / 2); y >= Cellbound.min.y; y -= Thickness)
+        {//左下から右上にかけてタイルを監査する
+
+            //中央までで打ち止め
+            for (int x = Cellbound.max.x / 2 + 1; x <= Cellbound.max.x; x++)
+            {
+                //乱数設定
+                int rad = Random.Range(1, 10);
+
+                //乱数で当たったらタイルを埋める(1/5程度)
+                if (rad > 8)
+                {
+                    var position = new Vector3Int(x, y, 0);
+                    posRight.Add(position);
+
+                    break;///点が打たれた時点で、そのx軸での生成処理は終了
+                }
+
+                //この時点でどこも打たれていなければ、右端で打つ
+                if(x == Cellbound.max.x)
+                {
+                    var position = new Vector3Int(x, y, 0);
+                    posRight.Add(position);
+
+                    break;///点が打たれた時点で、そのx軸での生成処理は終了
+                }
+            }
+        }
+
+        return posRight;
+    }
+    void LeftPointerToMiddle(MapInfo mapInfo, int[,] mapdata, int[,] mappoint)
+    {
+        for (int y = 0; y < mapInfo.size.y; y++)
+        {//左下から右上にかけてタイルを監査する
+
+            for (int x = 0; x < mapInfo.size.x; x++)
+            {
+                //乱数設定
+                int rad = Random.Range(1, 10);
+
+                //乱数で当たったらタイルを埋める(1/5程度)
+                if (rad > 8)
+                {
+
+                }
+            }
+        }
+    }
+
+    //右端から中央へ点を打つ
+    void RightPointerToMiddle(MapInfo mapInfo, int[,] mapdata, int[,] mappoint)
+    {
+        for (int y = 0; y < mapInfo.size.y; y++)
+        {//左下から右上にかけてタイルを監査する
+
+            for (int x = 0; x < mapInfo.size.x; x++)
+            {
+                //乱数設定
+                int rad = Random.Range(1, 10);
+
+                //乱数で当たったらタイルを埋める(1/5程度)
+                if (rad > 8)
+                {
+
+                }
+            }
+        }
+    }
+
+
+    void MapAutoCreate(MapInfo mapInfo, List<Vector3Int> posLeft, List<Vector3Int> posRight)
+    {
+        //タイルマップコンポーネントの取得
+        var maptile = mapInfo.mapobj.GetComponent<Tilemap>();
+
+        //入口と出口となる部分が正常に生成されていれば、処理を続行する
+        if (!(posLeft[0].y == posRight[0].y && posLeft[posLeft.Count - 1].y == posRight[posRight.Count - 1].y))
+        {
+            //きちんと点が生成されていなければ、再生成処理を行う
+            Debug.LogError("正常に生成されませんでした。再生成を行います");
+
+            return;
+        }
+
+        mapInfo.GimmickStartPos = new List<Vector3Int>();
+        mapInfo.GimmickGoalPos = new List<Vector3Int>();
+        mapInfo.GimmickStartPos.Add(new Vector3Int(-9999, -9999, 0));
+
+        //壁を作る処理
+        //このfor文では、必要以上に凸凹しないように調整するためのもの
+        for (int x = 0; x < posLeft.Count - 1; x++)
+        {
+            for (int ex = x + 1; ex < posLeft.Count - 1; ex++)
+            {
+                //次の点として、適切かどうかを決める
+                if (Mathf.Abs(posLeft[x].x - posLeft[ex].x) < size.x + ((int)((-Mathf.Pow(x, 2) + (size.y * Thickness * x)) / size.y * Thickness)) * (Reaction - 1) / Thickness || posLeft[ex] == posLeft[posLeft.Count - 1])
+                {
+                    //必要以上に離れていなければ、中継点として扱う
+                    //または、次の点が最後の点であれば、それは中継点として扱う
+                    break;
+                }
+                else
+                {
+                    //不適合であれば、候補として消す
+                    maptile.SetTile(posLeft[ex], null);
+                    posLeft.RemoveAt(ex);
+                    //減らした分だけ、exも調整する
+                    ex--;
+                }
+            }
+
+            AStarPath.Instance.astarSearchPathFinding(mapInfo, posLeft[x], posLeft[x + 1], 0);//左
+        }
+        Gimmick_Init(mapInfo, 0);
+
+        //AStarPath.Instance.astarSearchPathFinding(maptile, posLeft[0], posLeft[1], 0);//左
+
+        for (int x = 0; x < posRight.Count - 1; x++)
+        {
+            for (int ex = x + 1; ex < posRight.Count - 1; ex++)
+            {
+                //次の点として、適切かどうかを決める
+                if (Mathf.Abs(posRight[x].x - posRight[ex].x) < size.x + ((int)((-Mathf.Pow(x, 2) + (size.y * Thickness * x)) / size.y * Thickness)) * (Reaction - 1) / Thickness || posRight[ex] == posRight[posRight.Count - 1])
+                {
+                    //必要以上に離れていなければ、中継点として扱う
+                    //または、次の点が最後の点であれば、それは中継点として扱う
+
+                    break;
+                }
+                else
+                {
+                    //不適合であれば、候補として消す
+                    maptile.SetTile(posRight[ex], null);
+                    posRight.RemoveAt(ex);
+                    //減らした分だけ、exも調整する
+                    ex--;
+                }
+            }
+
+            AStarPath.Instance.astarSearchPathFinding(mapInfo, posRight[x], posRight[x + 1], 1);//右
+        }
+        /*
+                //上下の枠を閉じる
+                for (int x = posLeft[0].x; x <= posRight[0].x; x++)
+                {
+                    var position = posLeft[0];
+                    position.x = x;
+
+                    maptile.SetTile(position, Basetile);
+                }
+
+                for (int x = posLeft[posLeft.Count - 1].x; x <= posRight[posRight.Count - 1].x; x++)
+                {
+                    var position = posLeft[posLeft.Count - 1];
+                    position.x = x;
+
+                    if (maptile.HasTile(position)) maptile.SetTile(position, null);
+                    else maptile.SetTile(position, Basetile);
+                }*/
+    }
+
+
+
 
     void MapAutoCreate(MapInfo mapInfo, int[,] mapdata, int[,] mappoint)
     {
