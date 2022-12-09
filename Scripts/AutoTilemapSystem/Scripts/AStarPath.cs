@@ -212,10 +212,16 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                         {
                             cellInfo preCell = cell;
 
+
                             //片側の方だけの実装を想定
-                            if(mapInfo.GimmickStartPos[0] == new Vector3Int(-9999, -9999, 0))
+                            if(mapInfo.GimmickStartPosx[0] == new Vector3Int(-9999, -9999, 0))
                             {
-                                mapInfo.GimmickStartPos[0] = mapInfo.map.WorldToCell(preCell.pos);
+                                mapInfo.GimmickStartPosx[0] = mapInfo.map.WorldToCell(preCell.pos);
+                            }
+
+                            if (mapInfo.GimmickStartPosy[0] == new Vector3Int(-9999, -9999, 0))
+                            {
+                                mapInfo.GimmickStartPosy[0] = mapInfo.map.WorldToCell(preCell.pos);
                             }
 
                             while (preCell.parent != new Vector3(-9999, -9999, 0))
@@ -238,10 +244,21 @@ public class AStarPath : SingletonMonoBehaviourFast<AStarPath>
                                     //Debug.Log("曲がった");
 
                                     //現在のマス目で登録
-                                    mapInfo.GimmickGoalPos.Add(mapInfo.map.WorldToCell(prevCell.pos));
+                                    mapInfo.GimmickGoalPosy.Add(mapInfo.map.WorldToCell(prevCell.pos));
 
                                     //次のマス目を、新たなスタート地点として登録
-                                    mapInfo.GimmickStartPos.Add(mapInfo.map.WorldToCell(preCell.pos));
+                                    mapInfo.GimmickStartPosy.Add(mapInfo.map.WorldToCell(preCell.pos));
+                                }
+
+                                if (prevCell.pos.y != preCell.pos.y)
+                                {
+                                    //Debug.Log("曲がった");
+
+                                    //現在のマス目で登録
+                                    mapInfo.GimmickGoalPosx.Add(mapInfo.map.WorldToCell(prevCell.pos));
+
+                                    //次のマス目を、新たなスタート地点として登録
+                                    mapInfo.GimmickStartPosx.Add(mapInfo.map.WorldToCell(preCell.pos));
                                 }
                             }
                             

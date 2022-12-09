@@ -255,8 +255,9 @@ MonoBehaviour:
   size: {x: 15, y: 15}
   TileGrid: {fileID: 1628137718}
   Basetile: {fileID: 11400000, guid: 8306c33f836cc9c4eb774ae68f60fba5, type: 2}
-  Itemtile: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
+  Itemtile_Y: {fileID: 11400000, guid: 3d8ef255ef6dc5647a2d78d7dd643b39, type: 2}
   Thickness: 3
+  Reaction: 2
 --- !u!114 &314972811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1457,7 +1458,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1613215030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 0, z: -10}
+  m_LocalPosition: {x: 80, y: 20, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
